@@ -1,0 +1,116 @@
+#!/usr/bin/env python3
+"""
+简化的示例脚本：展示如何使用BioMedGPS数据进行药物发现分析
+不需要安装额外依赖，仅用于演示数据文件的使用
+"""
+
+import os
+import sys
+
+def main():
+    """主函数：演示数据文件的使用"""
+    
+    # 获取项目根目录路径
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    print("BioMedGPS药物发现分析示例")
+    print("=" * 50)
+    
+    # 设置数据文件路径 - 从examples目录向上查找
+    data_dir = os.path.join(project_root, "data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV")
+    entity_file = os.path.join(data_dir, "annotated_entities.tsv")
+    knowledge_graph = os.path.join(data_dir, "knowledge_graph.tsv")
+    entity_embeddings = os.path.join(data_dir, "entity_embeddings.tsv")
+    relation_embeddings = os.path.join(data_dir, "relation_type_embeddings.tsv")
+    
+    # 检查文件是否存在
+    for file_path in [entity_file, knowledge_graph, entity_embeddings, relation_embeddings]:
+        if not os.path.exists(file_path):
+            print(f"错误：文件不存在 {file_path}")
+            return 1
+    
+    print("✓ 所有数据文件存在")
+    
+    # 演示数据文件的基本信息
+    print("\n数据文件基本信息:")
+    print("-" * 30)
+    
+    # 1. 实体文件信息
+    try:
+        with open(entity_file, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            print(f"实体文件行数: {len(lines)}")
+            
+            # 统计实体类型
+            entity_types = {}
+            for line in lines[1:]:  # 跳过标题行
+                parts = line.strip().split('\t')
+                if len(parts) >= 3:
+                    entity_type = parts[2]  # label列
+                    entity_types[entity_type] = entity_types.get(entity_type, 0) + 1
+            
+            print("实体类型分布:")
+            for entity_type, count in sorted(entity_types.items()):
+                print(f"  - {entity_type}: {count}")
+                
+    except Exception as e:
+        print(f"读取实体文件时出错: {e}")
+    
+    # 2. 知识图谱信息
+    try:
+        with open(knowledge_graph, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            print(f"\n知识图谱三元组数量: {len(lines) - 1}")  # 减去标题行
+            
+            # 统计关系类型
+            relation_types = {}
+            for line in lines[1:]:  # 跳过标题行
+                parts = line.strip().split('\t')
+                if len(parts) >= 1:
+                    relation_type = parts[0]  # relation_type列
+                    relation_types[relation_type] = relation_types.get(relation_type, 0) + 1
+            
+            print("关系类型分布 (前10个):")
+            for relation_type, count in sorted(relation_types.items(), key=lambda x: x[1], reverse=True)[:10]:
+                print(f"  - {relation_type}: {count}")
+                
+    except Exception as e:
+        print(f"读取知识图谱文件时出错: {e}")
+    
+    # 3. 嵌入文件信息
+    try:
+        with open(entity_embeddings, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            print(f"\n实体嵌入向量数量: {len(lines) - 1}")
+            
+            # 检查嵌入向量维度
+            if len(lines) > 1:
+                embedding_line = lines[1].strip().split('\t')
+                if len(embedding_line) >= 5:
+                    embedding_str = embedding_line[4]  # embedding列
+                    embedding_dim = len(embedding_str.split('|'))
+                    print(f"嵌入向量维度: {embedding_dim}")
+                    
+    except Exception as e:
+        print(f"读取实体嵌入文件时出错: {e}")
+    
+    # 4. 关系嵌入文件信息
+    try:
+        with open(relation_embeddings, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            print(f"关系嵌入向量数量: {len(lines) - 1}")
+            
+    except Exception as e:
+        print(f"读取关系嵌入文件时出错: {e}")
+    
+    print("\n" + "=" * 50)
+    print("数据文件分析完成！")
+    print("\n下一步可以:")
+    print("1. 安装依赖: pip install -e .")
+    print("2. 运行完整示例: python3 examples/example_usage.py")
+    print("3. 使用CLI工具: drugs4disease run --help")
+    
+    return 0
+
+if __name__ == "__main__":
+    sys.exit(main()) 
