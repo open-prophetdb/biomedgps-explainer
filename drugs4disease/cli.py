@@ -3,27 +3,35 @@ import pandas as pd
 import os
 from .core import DrugDiseaseCore
 from .filter import DrugFilter
-from .visualizer import DrugVisualizer
+from .visualizer import Visualizer
 
 @click.group()
 def cli():
-    """drugs4disease: 生成潜在药物列表、筛选与可视化。"""
+    """drugs4disease: generate potential drug list, filter and visualize."""
     pass
 
 @cli.command()
-@click.option('--disease', required=True, help='疾病名称或ID')
-@click.option('--entity-file', required=True, help='实体文件')
-@click.option('--knowledge-graph', required=True, help='知识图谱文件')
-@click.option('--entity-embeddings', required=True, help='实体嵌入文件')
-@click.option('--relation-embeddings', required=True, help='关系嵌入文件')
-@click.option('--output-dir', required=True, help='输出目录')
-@click.option('--model', default='TransE_l2', help='KGE模型')
-@click.option('--top-n-diseases', default=100, help='相似疾病数量')
-@click.option('--gamma', default=12.0, help='Gamma参数')
-@click.option('--threshold', default=0.5, help='药物筛选阈值')
-@click.option('--relation-type', default='DGIDB::OTHER::Gene:Compound', help='关系类型')
-def run(disease, entity_file, knowledge_graph, entity_embeddings, relation_embeddings, output_dir, model, top_n_diseases, gamma, threshold, relation_type):
-    """一键完成所有分析步骤，生成 annotated_drugs.xlsx"""
+@click.option('--disease', required=True, help='disease id, e.g. MONDO:0004979')
+@click.option('--entity-file', help='entity file (optional, use default directory if not specified)')
+@click.option('--knowledge-graph', help='knowledge graph file (optional, use default directory if not specified)')
+@click.option('--entity-embeddings', help='entity embeddings file (optional, use default directory if not specified)')
+@click.option('--relation-embeddings', help='relation embeddings file (optional, use default directory if not specified)')
+@click.option('--output-dir', required=True, help='output directory')
+@click.option('--model', default='TransE_l2', help='KGE model')
+@click.option('--top-n-diseases', default=100, help='number of similar diseases')
+@click.option('--gamma', default=12.0, help='Gamma parameter')
+@click.option('--threshold', default=0.5, help='drug filtering threshold')
+@click.option('--relation-type', default='DGIDB::OTHER::Gene:Compound', help='relation type')
+@click.option('--top-n-drugs', default=1000, help='number of drugs to interpret')  # number of drugs to interpret, default 1000, if number of drugs to interpret is specified, then top_n_drugs is required
+def run(disease, entity_file, knowledge_graph, entity_embeddings, relation_embeddings, output_dir, model, top_n_diseases, gamma, threshold, relation_type, top_n_drugs):
+    """
+    One-click complete all analysis steps, generate annotated_drugs.xlsx
+    
+    Model file processing logic:
+    - If no model file is specified, use the file in the default directory (supports ZIP automatic decompression)
+    - If all four model files are specified, use the specified files
+    - If only some files are specified, an error will be reported (all four files must be specified together)
+    """
     os.makedirs(output_dir, exist_ok=True)
     core = DrugDiseaseCore()
     
@@ -39,72 +47,51 @@ def run(disease, entity_file, knowledge_graph, entity_embeddings, relation_embed
             top_n_diseases=top_n_diseases,
             gamma=gamma,
             threshold=threshold,
-            relation_type=relation_type
+            relation_type=relation_type,
+            top_n_drugs=top_n_drugs
         )
-        click.echo(f'✅ 分析完成！结果已保存到 {os.path.join(output_dir, "annotated_drugs.xlsx")}')
+        click.echo(f'✅ Analysis completed! Results saved to {os.path.join(output_dir, "annotated_drugs.xlsx")}')
     except Exception as e:
-        click.echo(f'❌ 分析失败: {str(e)}', err=True)
+        click.echo(f'❌ Analysis failed: {str(e)}', err=True)
         raise
 
 @cli.command()
-@click.option('--expression', required=True, help='筛选表达式')
-@click.option('--input', 'input_file', required=True, help='输入文件 annotated_drugs.xlsx')
-@click.option('--output', 'output_file', required=True, help='输出文件 final_drugs.xlsx')
+@click.option('--expression', required=True, help='filter expression')
+@click.option('--input', 'input_file', required=True, help='input file annotated_drugs.xlsx')
+@click.option('--output', 'output_file', required=True, help='output file final_drugs.xlsx')
 def filter(expression, input_file, output_file):
-    """根据表达式筛选药物列表"""
+    """filter drugs list based on expression"""
     df = pd.read_excel(input_file)
     filtered = DrugFilter.filter_dataframe(df, expression)
     with pd.ExcelWriter(output_file) as writer:
         df.to_excel(writer, sheet_name='original', index=False)
         filtered.to_excel(writer, sheet_name='filtered', index=False)
-    click.echo(f'已生成 {output_file}')
+    click.echo(f'✅ Filter completed! Results saved to {output_file}')
 
 @cli.command()
-@click.option('--input', 'input_file', required=True, help='输入文件 annotated_drugs.xlsx')
-@click.option('--output-dir', required=True, help='图表输出目录')
-@click.option('--viz-type', default='all', help='可视化类型 (all, score_distribution, top_drugs_bar, disease_similarity_heatmap, network_centrality, shared_genes_pathways, drug_disease_network)')
+@click.option('--input', 'input_file', required=True, help='input file annotated_drugs.xlsx')
+@click.option('--output-dir', required=True, help='chart output directory')
+@click.option('--viz-type', default='all', help='visualization type (all, score_distribution, disease_similarity_heatmap, network_centrality, shared_genes_pathways, drug_disease_network, shared_gene_count, score_vs_degree, overlap_pathways, key_genes_distribution, existing_vs_predicted)')
 def visualize(input_file, output_dir, viz_type):
-    """生成可视化图表和报告"""
+    """generate visualization charts and report"""
     os.makedirs(output_dir, exist_ok=True)
-    
-    visualizer = DrugVisualizer()
-    
-    if viz_type == 'all':
-        # 生成所有类型的可视化
-        viz_types = [
-            'score_distribution',
-            'top_drugs_bar', 
-            'disease_similarity_heatmap',
-            'network_centrality',
-            'shared_genes_pathways',
-            'drug_disease_network'
-        ]
-        
-        for vt in viz_types:
-            try:
-                output_file = os.path.join(output_dir, f"{vt}.png")
-                visualizer.create_visualization(
-                    data_file=input_file,
-                    viz_type=vt,
-                    output_file=output_file
-                )
-                click.echo(f'✓ 生成图表: {vt}')
-            except Exception as e:
-                click.echo(f'✗ 生成图表失败 {vt}: {e}')
-        
-        # 生成综合报告
+
+    visualizer = Visualizer()
+
+    if viz_type == 'all':        
+        # generate comprehensive report
         report_file = os.path.join(output_dir, "analysis_report.html")
         try:
             visualizer.generate_report(
                 data_file=input_file,
                 output_file=report_file,
-                title="药物发现分析报告"
+                title="Drug Discovery Analysis Report"
             )
-            click.echo(f'✓ 生成综合报告: {report_file}')
+            click.echo(f"✅ Generate comprehensive report: {report_file}")
         except Exception as e:
-            click.echo(f'✗ 生成报告失败: {e}')
+            click.echo(f"❌ Generate report failed: {e}")
     else:
-        # 生成单个类型的可视化
+        # generate single type of visualization
         output_file = os.path.join(output_dir, f"{viz_type}.png")
         try:
             visualizer.create_visualization(
@@ -112,11 +99,11 @@ def visualize(input_file, output_dir, viz_type):
                 viz_type=viz_type,
                 output_file=output_file
             )
-            click.echo(f'✓ 生成图表: {output_file}')
+            click.echo(f"✅ Generate chart: {output_file}")
         except Exception as e:
-            click.echo(f'✗ 生成图表失败: {e}')
-    
-    click.echo(f'✅ 可视化完成！输出目录: {output_dir}')
+            click.echo(f"❌ Generate chart failed: {e}")
+
+    click.echo(f"✅ Visualization completed! Output directory: {output_dir}")
 
 if __name__ == '__main__':
     cli() 

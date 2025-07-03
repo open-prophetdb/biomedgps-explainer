@@ -19,7 +19,22 @@ pip install .
 
 ## 数据准备
 
-本工具使用BioMedGPS v2知识图谱嵌入模型。请确保数据文件位于正确位置：
+本工具使用BioMedGPS v2知识图谱嵌入模型。支持两种数据文件准备方式：
+
+### 方法1：使用ZIP压缩文件（推荐）
+将BioMedGPS模型ZIP文件放在模型目录下，脚本会自动检测并解压缩：
+
+```
+data/
+└── biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+    ├── annotated_entities.tsv.zip      # 实体注释信息（ZIP格式）
+    ├── entity_embeddings.tsv.zip       # 实体嵌入向量（ZIP格式）
+    ├── knowledge_graph.tsv.zip         # 知识图谱三元组（ZIP格式）
+    └── relation_type_embeddings.tsv.zip # 关系类型嵌入向量（ZIP格式）
+```
+
+### 方法2：使用解压缩后的TSV文件
+手动解压缩模型文件到以下位置：
 
 ```
 data/
@@ -30,24 +45,26 @@ data/
     └── relation_type_embeddings.tsv # 关系类型嵌入向量
 ```
 
+**自动解压缩功能**：脚本会自动检测模型目录下的ZIP文件（如 `annotated_entities.tsv.zip`）并解压缩为对应的TSV文件。如果TSV文件已存在，则跳过解压缩步骤。
+
 详细的数据文件格式说明请参考 `data/README.md`。
 
 ## 示例脚本使用
 
 ### 1. 验证数据文件
 ```bash
-python3 examples/test_data_files.py
+python3 examples/run_data_validation.py
 ```
 
 ### 2. 查看数据统计
 ```bash
-python3 examples/simple_example.py
+python3 examples/run_data_statistics.py
 ```
 
 ### 3. 安装依赖并运行完整示例
 ```bash
 pip install -e .
-python3 examples/example_usage.py
+python3 examples/run_full_example.py
 ```
 
 ## CLI 用法示例

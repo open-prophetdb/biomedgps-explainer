@@ -1,11 +1,18 @@
 #!/usr/bin/env python3
 """
-简单的数据文件验证脚本
+数据文件验证脚本
 验证BioMedGPS数据文件是否存在且格式正确
+支持自动解压缩ZIP格式的模型文件
 """
 
 import os
 import sys
+
+# 添加项目根目录到Python路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
+from drugs4disease.utils import extract_model_files_if_needed, get_default_model_dir, validate_model_files
 
 def check_file_exists(file_path, description):
     """检查文件是否存在"""
@@ -48,28 +55,33 @@ def check_file_format(file_path, required_columns, description):
         return False
 
 def main():
-    """主函数"""
-    # 获取项目根目录路径
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
+    """主函数：验证数据文件"""
     print("BioMedGPS数据文件验证")
     print("=" * 50)
     
-    # 设置数据目录 - 从examples目录向上查找
-    data_dir = os.path.join(project_root, "data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV")
+    # 获取默认模型目录
+    model_dir = get_default_model_dir()
+    
+    # 检查并解压缩模型目录下的ZIP文件
+    if not extract_model_files_if_needed(model_dir):
+        print("\n模型文件准备失败")
+        print("请确保以下任一条件满足:")
+        print("1. 模型目录存在且包含解压缩后的TSV文件")
+        print("2. 模型目录存在且包含对应的ZIP文件")
+        return 1
     
     # 检查数据文件
     files_to_check = [
-        (os.path.join(data_dir, "annotated_entities.tsv"), 
+        (os.path.join(model_dir, "annotated_entities.tsv"), 
          ["id", "name", "label"], 
          "实体注释文件"),
-        (os.path.join(data_dir, "knowledge_graph.tsv"), 
+        (os.path.join(model_dir, "knowledge_graph.tsv"), 
          ["source_id", "source_type", "target_id", "target_type", "relation_type"], 
          "知识图谱文件"),
-        (os.path.join(data_dir, "entity_embeddings.tsv"), 
+        (os.path.join(model_dir, "entity_embeddings.tsv"), 
          ["entity_id", "entity_type", "embedding"], 
          "实体嵌入文件"),
-        (os.path.join(data_dir, "relation_type_embeddings.tsv"), 
+        (os.path.join(model_dir, "relation_type_embeddings.tsv"), 
          ["embedding"], 
          "关系嵌入文件")
     ]
@@ -89,13 +101,16 @@ def main():
     print("\n" + "=" * 50)
     if all_files_exist and all_formats_correct:
         print("✓ 所有数据文件验证通过！")
-        print("\n可以运行以下命令进行测试:")
-        print("python3 examples/example_usage.py")
+        print("\n下一步操作:")
+        print("1. 查看数据统计: python3 examples/run_data_statistics.py")
+        print("2. 运行完整分析: python3 examples/run_full_example.py")
+        print("3. 使用CLI工具: drugs4disease run --help")
         return 0
     else:
         print("✗ 数据文件验证失败")
         if not all_files_exist:
-            print("- 请确保已下载并解压BioMedGPS数据文件")
+            print("- 请确保已下载BioMedGPS数据文件")
+            print("- 或者将ZIP格式的模型文件放在模型目录下")
         if not all_formats_correct:
             print("- 请检查数据文件格式是否正确")
         return 1

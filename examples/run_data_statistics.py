@@ -1,27 +1,40 @@
 #!/usr/bin/env python3
 """
-简化的示例脚本：展示如何使用BioMedGPS数据进行药物发现分析
+数据统计脚本：展示BioMedGPS数据文件的基本信息和统计
 不需要安装额外依赖，仅用于演示数据文件的使用
+支持自动解压缩ZIP格式的模型文件
 """
 
 import os
 import sys
 
+# 添加项目根目录到Python路径
+project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, project_root)
+
+from drugs4disease.utils import extract_model_files_if_needed, get_default_model_dir
+
 def main():
-    """主函数：演示数据文件的使用"""
+    """主函数：展示数据统计信息"""
     
-    # 获取项目根目录路径
-    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    
-    print("BioMedGPS药物发现分析示例")
+    print("BioMedGPS数据统计信息")
     print("=" * 50)
     
-    # 设置数据文件路径 - 从examples目录向上查找
-    data_dir = os.path.join(project_root, "data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV")
-    entity_file = os.path.join(data_dir, "annotated_entities.tsv")
-    knowledge_graph = os.path.join(data_dir, "knowledge_graph.tsv")
-    entity_embeddings = os.path.join(data_dir, "entity_embeddings.tsv")
-    relation_embeddings = os.path.join(data_dir, "relation_type_embeddings.tsv")
+    # 获取默认模型目录
+    model_dir = get_default_model_dir()
+    
+    # 检查并解压缩模型目录下的ZIP文件
+    if not extract_model_files_if_needed(model_dir):
+        print("\n模型文件准备失败")
+        print("请确保以下任一条件满足:")
+        print("1. 模型目录存在且包含解压缩后的TSV文件")
+        print("2. 模型目录存在且包含对应的ZIP文件")
+        return 1
+    
+    entity_file = os.path.join(model_dir, "annotated_entities.tsv")
+    knowledge_graph = os.path.join(model_dir, "knowledge_graph.tsv")
+    entity_embeddings = os.path.join(model_dir, "entity_embeddings.tsv")
+    relation_embeddings = os.path.join(model_dir, "relation_type_embeddings.tsv")
     
     # 检查文件是否存在
     for file_path in [entity_file, knowledge_graph, entity_embeddings, relation_embeddings]:
@@ -32,7 +45,7 @@ def main():
     print("✓ 所有数据文件存在")
     
     # 演示数据文件的基本信息
-    print("\n数据文件基本信息:")
+    print("\n数据文件统计信息:")
     print("-" * 30)
     
     # 1. 实体文件信息
@@ -104,10 +117,10 @@ def main():
         print(f"读取关系嵌入文件时出错: {e}")
     
     print("\n" + "=" * 50)
-    print("数据文件分析完成！")
-    print("\n下一步可以:")
-    print("1. 安装依赖: pip install -e .")
-    print("2. 运行完整示例: python3 examples/example_usage.py")
+    print("数据统计完成！")
+    print("\n下一步操作:")
+    print("1. 验证文件格式: python3 examples/run_data_validation.py")
+    print("2. 运行完整分析: python3 examples/run_full_example.py")
     print("3. 使用CLI工具: drugs4disease run --help")
     
     return 0
