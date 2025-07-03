@@ -58,7 +58,7 @@ coverage.xml
 .idea/
 
 # Data, results, logs
-results/
+results*/
 *.log
 *.tmp
 *.bak

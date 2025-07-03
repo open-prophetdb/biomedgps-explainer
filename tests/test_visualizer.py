@@ -7,10 +7,10 @@ class TestVisualizer(unittest.TestCase):
     def setUp(self):
         self.df = pd.DataFrame({
             'score': [0.6, 0.4, 0.8, 0.9, 0.3],
-            'shared_gene_counts': [2, 0, 5, 8, 1],
+            'num_of_shared_genes_in_path': [2, 0, 5, 8, 1],
             'drug_degree': [10, 5, 20, 15, 8],
-            'overlap_pathways_count': [1, 0, 3, 5, 0],
-            'num_key_genes': [2, 0, 4, 6, 1],
+            'num_of_shared_pathways': [1, 0, 3, 5, 0],
+            'num_of_key_genes': [2, 0, 4, 6, 1],
             'existing': [False, True, False, True, False]
         })
         self.outdir = 'test_figs'

@@ -8,121 +8,13 @@ Support automatic decompression of ZIP format model files
 
 import os
 import sys
+import pandas as pd
 
 # add project root directory to Python path, so that the drugs4disease package can be imported
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, project_root)
 
-from drugs4disease.core import DrugDiseaseCore
-from drugs4disease.filter import DrugFilter
-from drugs4disease.visualizer import Visualizer
-from drugs4disease.utils import get_model_file_paths, validate_model_files
-
-def main(disease_id: str):
-    """
-    Main function: demonstrate the complete drug discovery workflow
-    """
-
-    # initialize the core components
-    core = DrugDiseaseCore()
-    drug_filter = DrugFilter()
-    visualizer = Visualizer()
-
-    # smart get model file paths (support ZIP automatic decompression)
-    try:
-        entity_file, knowledge_graph, entity_embeddings, relation_embeddings = get_model_file_paths()
-        print("✓ Model file paths obtained successfully")
-    except Exception as e:
-        print(f"❌ Model file paths obtained failed: {e}")
-        sys.exit(1)
-
-    # validate files
-    if not validate_model_files(entity_file, knowledge_graph, entity_embeddings, relation_embeddings):
-        print("❌ Model file validation failed")
-        sys.exit(1)
-
-    # set output directory - create results in the project root directory
-    output_dir = os.path.join(project_root, "results")
-    os.makedirs(output_dir, exist_ok=True)
-
-    print("=" * 60)
-    print("Start drug discovery analysis workflow")
-    print("=" * 60)
-
-    try:
-        # step 1: run full analysis pipeline
-        print("\n1. Run full analysis pipeline...")
-        core.run_full_pipeline(
-            disease_id=disease_id,
-            entity_file=entity_file,
-            knowledge_graph=knowledge_graph,
-            entity_embeddings=entity_embeddings,
-            relation_embeddings=relation_embeddings,
-            output_dir=output_dir,
-            model='TransE_l2',
-            top_n_diseases=50,
-            gamma=12.0,
-            threshold=0.5,
-            relation_type='GNBR::T::Compound:Disease',
-            top_n_drugs=10
-        )
-
-        annotated_file = os.path.join(output_dir, "annotated_drugs.xlsx")
-        if os.path.exists(annotated_file):
-            print(f"✓ Full analysis completed, results saved to: {annotated_file}")
-        else:
-            print("✗ Full analysis failed")
-            return
-
-        # step 2: apply complex filter expression
-        print("\n2. Apply filter conditions...")
-        # example filter expression: select drugs with score > 0.6 and num_of_shared_diseases > 2
-        filter_expression = "score > 0.6 and num_of_shared_diseases > 2"
-
-        filtered_file = os.path.join(output_dir, "filtered_drugs.xlsx")
-        drug_filter.filter_drugs(
-            input_file=annotated_file,
-            expression=filter_expression,
-            output_file=filtered_file,
-            sheet_names=("annotated_drugs", "filtered_drugs")
-        )
-
-        if os.path.exists(filtered_file):
-            print(f"✓ Filter completed, results saved to: {filtered_file}")
-        else:
-            print("✗ Filter failed")
-            return
-
-        # step 3: generate visualization report
-        print("\n3. Generate visualization report...")
-        report_dir = os.path.join(output_dir, "visualization_report")
-        os.makedirs(report_dir, exist_ok=True)
-
-        # generate comprehensive report
-        report_file = os.path.join(report_dir, "analysis_report.html")
-        try:
-            visualizer.generate_report(
-                data_file=filtered_file,
-                output_file=report_file,
-                title=f"Drug Discovery Analysis Report - {disease_id}"
-            )
-            print(f"✓ Generate comprehensive report: {report_file}")
-        except Exception as e:
-            print(f"✗ Generate report failed: {e}")
-
-        print("\n" + "=" * 60)
-        print("Analysis completed!")
-        print("=" * 60)
-        print(f"Main result files:")
-        print(f"  - Full analysis results: {annotated_file}")
-        print(f"  - Filtered results: {filtered_file}")
-        print(f"  - Visualization report: {report_dir}/")
-        print(f"  - Comprehensive report: {report_file}")
-
-    except Exception as e:
-        print(f"Error occurred during analysis: {e}")
-        import traceback
-        traceback.print_exc()
+from drugs4disease.full_pipeline import main as run_full_pipeline
 
 if __name__ == "__main__":
-    main(disease_id="MONDO:0004979")
+    run_full_pipeline(disease_id="MONDO:0004979")

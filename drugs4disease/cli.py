@@ -4,6 +4,7 @@ import os
 from .core import DrugDiseaseCore
 from .filter import DrugFilter
 from .visualizer import Visualizer
+from .full_pipeline import main as run_full_pipeline
 
 @click.group()
 def cli():
@@ -71,7 +72,7 @@ def filter(expression, input_file, output_file):
 @cli.command()
 @click.option('--input', 'input_file', required=True, help='input file annotated_drugs.xlsx')
 @click.option('--output-dir', required=True, help='chart output directory')
-@click.option('--viz-type', default='all', help='visualization type (all, score_distribution, disease_similarity_heatmap, network_centrality, shared_genes_pathways, drug_disease_network, shared_gene_count, score_vs_degree, overlap_pathways, key_genes_distribution, existing_vs_predicted)')
+@click.option('--viz-type', default='all', help='visualization type (all, score_distribution, disease_similarity_heatmap, network_centrality, shared_genes_pathways, drug_disease_network, shared_gene_count, score_vs_degree, shared_pathways, key_genes_distribution, existing_vs_predicted)')
 def visualize(input_file, output_dir, viz_type):
     """generate visualization charts and report"""
     os.makedirs(output_dir, exist_ok=True)
@@ -104,6 +105,12 @@ def visualize(input_file, output_dir, viz_type):
             click.echo(f"❌ Generate chart failed: {e}")
 
     click.echo(f"✅ Visualization completed! Output directory: {output_dir}")
+    
+@cli.command()
+@click.option('--disease-id', required=True, help='disease id, e.g. MONDO:0004979')
+def run_full_pipeline(disease_id):
+    """run full pipeline"""
+    run_full_pipeline(disease_id=disease_id)
 
 if __name__ == '__main__':
     cli() 

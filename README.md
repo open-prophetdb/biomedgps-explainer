@@ -86,7 +86,7 @@ drugs4disease run --disease "MESH:D001249" \
 
 ### 2. 筛选药物列表
 ```bash
-drugs4disease filter --expression 'score >= 0.5 && shared_gene_counts > 0 && existing == False' \
+drugs4disease filter --expression 'score >= 0.5 && num_of_shared_genes_in_path > 0 && existing == False' \
   --input ./results/annotated_drugs.xlsx \
   --output ./results/final_drugs.xlsx
 ```
@@ -151,15 +151,15 @@ results/
 - `drug_id`: 药物ID
 - `drug_name`: 药物名称
 - `score`: KGE预测得分
-- `shared_gene_counts`: 与疾病共享的基因数量
+- `num_of_shared_genes_in_path`: 与疾病共享的基因数量
 - `paths`: 药物-疾病两跳路径
 - `existing`: 是否为已知治疗药物
-- `overlap_pathways_count`: 重叠通路数量
-- `overlap_pathways`: 重叠通路名称
+- `num_of_shared_pathways`: 重叠通路数量
+- `shared_pathways`: 重叠通路名称
 - `key_genes`: 关键基因
-- `num_key_genes`: 关键基因数量
+- `num_of_key_genes`: 关键基因数量
 - `drug_degree`: 药物在知识图谱中的连接度
-- `number_of_shared_genes`: 共享基因数量（详细统计）
+- `num_of_shared_genes`: 共享基因数量（详细统计）
 - `shared_gene_names`: 共享基因名称
 - `num_of_shared_diseases`: 共享疾病数量
 - `shared_disease_names`: 共享疾病名称
@@ -171,13 +171,13 @@ results/
 'score >= 0.7 && existing == False'
 
 # 有共享基因且重叠通路
-'shared_gene_counts > 0 && overlap_pathways_count > 0'
+'num_of_shared_genes_in_path > 0 && num_of_shared_pathways > 0'
 
 # 复杂条件组合
-'score >= 0.5 && shared_gene_counts > 2 && drug_degree >= 10 && existing == False'
+'score >= 0.5 && num_of_shared_genes_in_path > 2 && drug_degree >= 10 && existing == False'
 
 # 多条件或关系
-'score >= 0.8 || (shared_gene_counts > 5 && overlap_pathways_count > 3)'
+'score >= 0.8 || (num_of_shared_genes_in_path > 5 && num_of_shared_pathways > 3)'
 ```
 
 ## 单元测试

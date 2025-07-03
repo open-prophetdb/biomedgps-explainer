@@ -29,11 +29,11 @@ class DrugDiseaseCore:
         entity_file, knowledge_graph, entity_embeddings, relation_embeddings = get_model_file_paths(
             entity_file, knowledge_graph, entity_embeddings, relation_embeddings
         )
-        
+
         # validate files
         if not validate_model_files(entity_file, knowledge_graph, entity_embeddings, relation_embeddings):
             raise FileNotFoundError("模型文件验证失败")
-        
+
         # 1. drug prediction
         pred_xlsx = os.path.join(output_dir, 'predicted_drugs.xlsx')
         if os.path.exists(pred_xlsx):
@@ -86,6 +86,22 @@ class DrugDiseaseCore:
             )
         self.logger.info(f'Generated {annotated_xlsx}')
 
+    def get_disease_name(self, disease_id: str, entity_file: str) -> str:
+        """
+        Get the disease name.
+        """
+        entity_df = pd.read_csv(entity_file, sep="\t", dtype=str)
+        disease_name = entity_df[entity_df["id"] == disease_id]["name"].to_numpy()[0]
+        return disease_name
+
+    def get_drug_names(self, drug_ids: list[str], entity_file: str) -> list[str]:
+        """
+        Get the drug names.
+        """
+        entity_df = pd.read_csv(entity_file, sep="\t", dtype=str)
+        drug_names = entity_df[entity_df["id"].isin(drug_ids)]["name"].to_numpy()
+        return drug_names.tolist()
+
     def predict_drugs(self, disease_id, entity_file, knowledge_graph, entity_embeddings, relation_embeddings, model, top_n_diseases, gamma, threshold, relation_type, output_file):
         """
         Generate potential drug list, save annotated_drugs.xlsx.
@@ -136,7 +152,7 @@ class DrugDiseaseCore:
             raise ValueError("The disease id is not in the entity file.")
 
         target_disease_embedding = entity_embeddings_df[(entity_embeddings_df["entity_id"] == disease_id) & (entity_embeddings_df["entity_type"] == "Disease")]["embedding"].to_numpy()[0]
-        
+
         # BioMedGPS format relation ID lookup
         relation_embedding = None
         if "id" in relation_embeddings_df.columns:
@@ -177,9 +193,10 @@ class DrugDiseaseCore:
 
         self.logger.info("Predicted drugs are sorted by the score")
         scores.sort_values(by=["score"], ascending=False, inplace=True)
+        scores.reset_index(drop=True, inplace=True)
         scores["rank"] = scores.index + 1
         scores["pvalue"] = scores["rank"] / len(scores)
-        scores.reset_index(drop=True, inplace=True)
+        scores["pvalue"] = scores["pvalue"].apply(lambda x: f"{x:.3g}")
         lib.save_df(scores, output_file, "predicted_drugs")
 
         self.logger.info("Get the top N drugs for the given disease.")
@@ -194,7 +211,7 @@ class DrugDiseaseCore:
         disease_embedding = entity_embeddings_df[entity_embeddings_df["entity_id"] == disease_id]["embedding"].to_numpy()[0]
         all_disease_embeddings = list(entity_embeddings_df[entity_embeddings_df["entity_type"] == "Disease"]["embedding"].to_numpy())
         all_disease_ids = entity_embeddings_df[entity_embeddings_df["entity_type"] == "Disease"]["entity_id"].to_numpy()
-        
+
         self.logger.info(f"The type of disease_embedding: {type(disease_embedding)}, len(disease_embedding): {len(disease_embedding)}")
         self.logger.info(f"The type of all_disease_embeddings: {type(all_disease_embeddings)}, len(all_disease_embeddings): {len(all_disease_embeddings)}")
         self.logger.info(f"The type of relation_embedding: {type(relation_embedding)}, len(relation_embedding): {len(relation_embedding)}")
@@ -339,7 +356,7 @@ class DrugDiseaseCore:
             ]
 
         self.logger.info("Get the shared genes")
-        
+
         if os.path.exists(output_file):
             self.logger.info("Shared genes dataframe is loaded")
             shared_genes_df = pd.read_excel(output_file, sheet_name="shared_genes")
@@ -355,7 +372,7 @@ class DrugDiseaseCore:
                 "predicted_drug_name": predicted_df["drug_name"].tolist() * len(known_df["name"]),
                 "shared_genes": ["|".join(x) for x in shared_genes_list],
                 "shared_gene_names": ["|".join(x) for x in shared_gene_names_list],
-                "number_of_shared_genes": [len(x) for x in shared_genes_list],
+                "num_of_shared_genes": [len(x) for x in shared_genes_list],
             })
 
             self.logger.info("Shared genes dataframe is created")
@@ -482,7 +499,7 @@ class DrugDiseaseCore:
         entities_df = pd.read_csv(entity_embeddings, sep="\t")
         if not set(["entity_id", "entity_type", "embedding"]).issubset(set(entities_df.columns)):
             raise ValueError("The entity embeddings file must have the following columns: entity_id, entity_type, embedding")
-        
+
         entities_df["embedding"] = entities_df["embedding"].apply(lambda x: np.array(x.split("|"), dtype=float))
         self.logger.info("Entity embeddings file is loaded")
 
@@ -525,7 +542,7 @@ class DrugDiseaseCore:
         disease_embedding = entities_df[entities_df["entity_id"] == disease_id]["embedding"].to_numpy()[0]
         all_disease_embeddings = list(entities_df[entities_df["entity_type"] == "Disease"]["embedding"].to_numpy())
         all_disease_ids = entities_df[entities_df["entity_type"] == "Disease"]["entity_id"].to_numpy()
-        
+
         self.logger.info(f"The type of disease_embedding: {type(disease_embedding)}, len(disease_embedding): {len(disease_embedding)}")
         self.logger.info(f"The type of all_disease_embeddings: {type(all_disease_embeddings)}, len(all_disease_embeddings): {len(all_disease_embeddings)}")
         self.logger.info(f"The type of relation_embedding: {type(relation_embedding)}, len(relation_embedding): {len(relation_embedding)}")
@@ -564,19 +581,19 @@ class DrugDiseaseCore:
             (kg_df["source_id"].isin(predicted_drug_ids)) & 
             (kg_df["relation_type"].isin(treated_disease_relation_types))
         ][["source_id", "target_id", "target_name"]]
-        
+
         # group by drug
         grouped = treated_disease_df.groupby("source_id")
-        
+
         # use vectorized operation to process each drug
         for index, drug in tqdm(enumerate(predicted_drug_ids), total=len(predicted_drug_ids), desc="Get the treated diseases for the predicted drugs"):
             if drug in grouped.groups:
                 drug_data = grouped.get_group(drug)
                 treated_disease_ids = drug_data["target_id"].to_numpy()
-                
+
                 # use vectorized intersection operation
                 shared_disease_ids = np.intersect1d(treated_disease_ids, top_n_disease_ids)
-                
+
                 if len(shared_disease_ids) > 0:
                     # only query the shared disease names, avoid querying all diseases
                     shared_disease_names = drug_data[drug_data["target_id"].isin(shared_disease_ids)]["target_name"].to_numpy()
@@ -634,7 +651,7 @@ class DrugDiseaseCore:
 
         # create directed graph
         self.logger.info("Create the directed graph...")
-        G = nx.DiGraph()
+        G = nx.MultiDiGraph()
         for _, row in kg_df.iterrows():
             G.add_edge(row["source"], row["target"], relation=row["relation_type"])
 
@@ -667,9 +684,9 @@ class DrugDiseaseCore:
         self.logger.info("Stat the path count...")
         # count the path number
         df = df_results.groupby(["drug_id", "disease_id"]).size().reset_index(name="path_count")
-        drugs_df["shared_gene_counts"] = drugs_df["drug_id"].map(df.set_index("drug_id")["path_count"])
-        drugs_df["shared_gene_counts"] = drugs_df["shared_gene_counts"].fillna(0).astype(int)
-        
+        drugs_df["num_of_shared_genes_in_path"] = drugs_df["drug_id"].map(df.set_index("drug_id")["path_count"])
+        drugs_df["num_of_shared_genes_in_path"] = drugs_df["num_of_shared_genes_in_path"].fillna(0).astype(int)
+
         df = df_results.groupby(["drug_id", "disease_id"]).agg({"path": lambda x: ";".join(x)}).reset_index()
         drugs_df["paths"] = drugs_df["drug_id"].map(df.set_index("drug_id")["path"])
 
@@ -716,17 +733,17 @@ class DrugDiseaseCore:
         # drug pathway enrichment and overlap analysis
         for index, drug in tqdm(drugs_df.head(top_n_drugs).iterrows(), total=top_n_drugs, desc="Drug pathway enrichment and overlap analysis"):
             drug_id, drug_name = drug["drug_id"], drug["drug_name"]
-            
+
             # drug-regulated gene list
             regulated_genes = set(
                 drug_gene_edges["target_id"][drug_gene_edges["source_id"] == drug_id]
             ).union(set(drug_gene_edges["source_id"][drug_gene_edges["target_id"] == drug_id]))
-            
+
             regulated_gene_symbols = [id_to_name.get("Gene::" + gene, gene) for gene in regulated_genes]
-            
+
             if len(regulated_gene_symbols) < 5:
                 continue
-                
+
             # drug pathway enrichment
             drug_enrich_results = enrichr(
                 gene_list=list(regulated_gene_symbols),
@@ -735,13 +752,13 @@ class DrugDiseaseCore:
             )
             drug_enrich_df = drug_enrich_results.results
             drug_enrich_df = drug_enrich_df[drug_enrich_df["Adjusted P-value"] < 0.05]
-            
+
             # calculate the overlap pathways
-            overlap_pathways = set(drug_enrich_df["Term"]) & set(enrich_df["Term"])
-            overlap_pathways = list(overlap_pathways)
-            overlap_pathways.sort()
-            drugs_df.loc[index, "overlap_pathways_count"] = len(overlap_pathways)
-            drugs_df.loc[index, "overlap_pathways"] = ";".join(overlap_pathways)
+            shared_pathways = set(drug_enrich_df["Term"]) & set(enrich_df["Term"])
+            shared_pathways = list(shared_pathways)
+            shared_pathways.sort()
+            drugs_df.loc[index, "num_of_shared_pathways"] = len(shared_pathways)
+            drugs_df.loc[index, "shared_pathways"] = ";".join(shared_pathways)
 
         self.logger.info("Perform the PPI network analysis...")
         # PPI network analysis
@@ -750,51 +767,51 @@ class DrugDiseaseCore:
 
         for index, drug in tqdm(drugs_df.head(top_n_drugs).iterrows(), total=top_n_drugs, desc="PPI network analysis"):
             drug_id, drug_name = drug["drug_id"], drug["drug_name"]
-            
+
             # drug-regulated gene
             regulated_genes = set(
                 kg_df["target_id"][(kg_df["source_id"] == drug_id) & (kg_df["target_type"] == "Gene")]
             ).union(set(kg_df["source_id"][(kg_df["target_id"] == drug_id) & (kg_df["source_type"] == "Gene")]))
-            
+
             # extract the drug-regulated gene subgraph
             subgraph_genes = [gene for gene in regulated_genes if gene in ppi_network]
             subgraph = ppi_network.subgraph(subgraph_genes)
-            
+
             if subgraph.number_of_edges() == 0:
-                drugs_df.loc[index, "num_key_genes"] = 0
+                drugs_df.loc[index, "num_of_key_genes"] = 0
                 drugs_df.loc[index, "key_genes"] = ""
                 continue
 
             # calculate the network centrality metrics
             degree_centrality = nx.degree_centrality(subgraph)
             betweenness_centrality = nx.betweenness_centrality(subgraph)
-            
+
             centrality_df = pd.DataFrame({
                 "gene_id": list(degree_centrality.keys()),
                 "degree_centrality": list(degree_centrality.values()),
                 "betweenness_centrality": list(betweenness_centrality.values()),
             })
-            
+
             centrality_df.sort_values(["degree_centrality", "betweenness_centrality"], ascending=False, inplace=True)
             centrality_df["gene_name"] = centrality_df["gene_id"].apply(lambda x: id_to_name.get("Gene::" + x, x))
-            
+
             # only keep the genes related to the disease
             centrality_df = centrality_df[centrality_df["gene_id"].isin(specific_disease_genes)]
-            
+
             if centrality_df.empty:
-                drugs_df.loc[index, "num_key_genes"] = 0
+                drugs_df.loc[index, "num_of_key_genes"] = 0
                 drugs_df.loc[index, "key_genes"] = ""
                 continue
 
             # determine the key genes (top 10%)
             threshold = centrality_df["degree_centrality"].quantile(0.90)
             centrality_df = centrality_df[centrality_df["degree_centrality"] >= threshold]
-            
+
             threshold = centrality_df["betweenness_centrality"].quantile(0.90)
             centrality_df = centrality_df[centrality_df["betweenness_centrality"] >= threshold]
-            
-            num_key_genes = len(centrality_df)
-            drugs_df.loc[index, "num_key_genes"] = num_key_genes
+
+            num_of_key_genes = len(centrality_df)
+            drugs_df.loc[index, "num_of_key_genes"] = num_of_key_genes
             drugs_df.loc[index, "key_genes"] = ";".join(centrality_df["gene_name"].tolist())
 
         self.logger.info("Perform the drug degree calculation...")
@@ -806,7 +823,7 @@ class DrugDiseaseCore:
 
         self.logger.info("Sort and deduplicate the drugs...")
         # sort and deduplicate
-        drugs_df.sort_values(by=["score", "shared_gene_counts"], ascending=[False, False], inplace=True)
+        drugs_df.sort_values(by=["score", "num_of_shared_genes_in_path"], ascending=[False, False], inplace=True)
         drugs_df.drop_duplicates(subset=["drug_id"], inplace=True)
 
         self.logger.info("Save the results...")
@@ -823,19 +840,19 @@ class DrugDiseaseCore:
 
         # read the basic predicted results
         pred_df = pd.read_excel(pred_xlsx, sheet_name="predicted_drugs")
-        
+
         # read the network annotation results (contains most fields)
         network_df = pd.read_excel(network_anno_xlsx, sheet_name="network_annotations")
-        
+
         # read the shared genes annotation
         shared_genes_df = pd.read_excel(shared_genes_xlsx, sheet_name="shared_genes")
-        
+
         # read the shared diseases annotation
         shared_diseases_df = pd.read_excel(shared_diseases_xlsx, sheet_name="shared_diseases")
-        
+
         # merge the network annotation with other annotations
         final_df = network_df.copy()
-        
+
         # merge the shared genes information
         if not shared_genes_df.empty:
             # safely handle the shared gene names, filter out NaN values
@@ -854,19 +871,19 @@ class DrugDiseaseCore:
                 # deduplicate and filter out empty strings
                 unique_names = list(set([name.strip() for name in all_names if name.strip()]))
                 return "|".join(unique_names)
-            
+
             shared_genes_summary = shared_genes_df.groupby("predicted_drug_id").agg({
-                "number_of_shared_genes": "sum",
+                "num_of_shared_genes": "sum",
                 "shared_gene_names": safe_join_gene_names
             }).reset_index()
             shared_genes_summary.rename(columns={"predicted_drug_id": "drug_id"}, inplace=True)
             final_df = final_df.merge(shared_genes_summary, on="drug_id", how="left")
-            final_df["number_of_shared_genes"] = final_df["number_of_shared_genes"].fillna(0)
+            final_df["num_of_shared_genes"] = final_df["num_of_shared_genes"].fillna(0)
             final_df["shared_gene_names"] = final_df["shared_gene_names"].fillna("")
         else:
-            final_df["number_of_shared_genes"] = 0
+            final_df["num_of_shared_genes"] = 0
             final_df["shared_gene_names"] = ""
-        
+
         # merge the shared diseases information
         if not shared_diseases_df.empty:
             # safely handle the shared disease names, filter out NaN values
@@ -885,7 +902,7 @@ class DrugDiseaseCore:
                 # deduplicate and filter out empty strings
                 unique_names = list(set([name.strip() for name in all_names if name.strip()]))
                 return "|".join(unique_names)
-            
+
             shared_diseases_summary = shared_diseases_df.groupby("drug_id").agg({
                 "num_of_shared_diseases": "sum",
                 "shared_disease_names": safe_join_disease_names
@@ -896,64 +913,64 @@ class DrugDiseaseCore:
         else:
             final_df["num_of_shared_diseases"] = 0
             final_df["shared_disease_names"] = ""
-        
+
         # ensure all necessary fields exist
         required_fields = [
-            "drug_id", "drug_name", "score", "shared_gene_counts", "paths", 
-            "existing", "overlap_pathways_count", "key_genes", "drug_degree",
-            "number_of_shared_genes", "shared_gene_names", "num_of_shared_diseases", 
-            "shared_disease_names", "num_key_genes", "overlap_pathways"
+            "drug_id", "drug_name", "score", "num_of_shared_genes_in_path", "paths", 
+            "existing", "num_of_shared_pathways", "key_genes", "drug_degree",
+            "num_of_shared_genes", "shared_gene_names", "num_of_shared_diseases", 
+            "shared_disease_names", "num_of_key_genes", "shared_pathways"
         ]
-        
+
         for field in required_fields:
             if field not in final_df.columns:
                 final_df[field] = ""
-        
+
         # rearrange the column order, ensure it is consistent with the final table in run.ipynb
         column_order = [
-            "drug_id", "drug_name", "score", "shared_gene_counts", "paths", 
-            "existing", "overlap_pathways_count", "overlap_pathways", "key_genes", 
-            "num_key_genes", "drug_degree", "number_of_shared_genes", 
+            "drug_id", "drug_name", "score", "num_of_shared_genes_in_path", "paths", 
+            "existing", "num_of_shared_pathways", "shared_pathways", "key_genes", 
+            "num_of_key_genes", "drug_degree", "num_of_shared_genes", 
             "shared_gene_names", "num_of_shared_diseases", "shared_disease_names"
         ]
-        
+
         # only keep the existing columns
         available_columns = [col for col in column_order if col in final_df.columns]
         final_df = final_df[available_columns]
-        
+
         # fill the missing values
         final_df = final_df.fillna({
-            "shared_gene_counts": 0,
+            "num_of_shared_genes_in_path": 0,
             "paths": "",
             "existing": False,
-            "overlap_pathways_count": 0,
-            "overlap_pathways": "",
+            "num_of_shared_pathways": 0,
+            "shared_pathways": "",
             "key_genes": "",
-            "num_key_genes": 0,
+            "num_of_key_genes": 0,
             "drug_degree": 0,
-            "number_of_shared_genes": 0,
+            "num_of_shared_genes": 0,
             "shared_gene_names": "",
             "num_of_shared_diseases": 0,
             "shared_disease_names": ""
         })
-        
+
         # ensure the data types are correct
-        final_df["shared_gene_counts"] = final_df["shared_gene_counts"].astype(int)
+        final_df["num_of_shared_genes_in_path"] = final_df["num_of_shared_genes_in_path"].astype(int)
         final_df["existing"] = final_df["existing"].astype(bool)
-        final_df["overlap_pathways_count"] = final_df["overlap_pathways_count"].astype(int)
-        final_df["num_key_genes"] = final_df["num_key_genes"].astype(int)
+        final_df["num_of_shared_pathways"] = final_df["num_of_shared_pathways"].astype(int)
+        final_df["num_of_key_genes"] = final_df["num_of_key_genes"].astype(int)
         final_df["drug_degree"] = final_df["drug_degree"].astype(int)
-        final_df["number_of_shared_genes"] = final_df["number_of_shared_genes"].astype(int)
+        final_df["num_of_shared_genes"] = final_df["num_of_shared_genes"].astype(int)
         final_df["num_of_shared_diseases"] = final_df["num_of_shared_diseases"].astype(int)
-        
+
         # sort by score and shared gene counts
-        final_df.sort_values(by=["score", "shared_gene_counts"], ascending=[False, False], inplace=True)
+        final_df.sort_values(by=["score", "num_of_shared_genes_in_path"], ascending=[False, False], inplace=True)
         final_df.reset_index(drop=True, inplace=True)
-        
+
         # save the final results
         lib.save_df(final_df, output_file, "annotated_drugs")
         self.logger.info(f"Final annotated drugs saved to {output_file}")
-        
+
         return final_df
 
     def shared_diseases(self, *args, **kwargs):

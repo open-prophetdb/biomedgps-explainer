@@ -19,6 +19,7 @@ class Visualizer:
     def get_chart_types(self):
         return [
             "score_distribution",
+            "predicted_score_boxplot",
             "disease_similarity_heatmap",
             "network_centrality",
             "shared_genes_pathways",
@@ -26,10 +27,26 @@ class Visualizer:
             "shared_gene_count",
             "score_vs_degree",
             "shared_gene_count_vs_score",
-            "overlap_pathways",
+            "shared_pathways",
             "key_genes_distribution",
             "existing_vs_predicted",
         ]
+
+    def get_chart_title(self, chart_type):
+        return {
+            "score_distribution": "Drug Predicted Score Distribution",
+            "predicted_score_boxplot": "Predicted Score Distribution by Knowledge Graph Inclusion",
+            "disease_similarity_heatmap": "Drug Similarity Heatmap",
+            "network_centrality": "Network Centrality Analysis",
+            "shared_genes_pathways": "Shared Genes and Pathways Analysis",
+            "drug_disease_network": "Drug Similarity Network",
+            "shared_gene_count": "Number of Shared Genes Between Drugs and Diseases",
+            "shared_gene_count_vs_score": "Shared Gene Count vs Predicted Score",
+            "score_vs_degree": "Drug Degree vs Predicted Score",
+            "shared_pathways": "Number of Overlapping Pathways Between Drugs and Diseases",
+            "key_genes_distribution": "Number of Key Genes Distribution",
+            "existing_vs_predicted": "Ratio of Known Drugs to Predicted Drugs",
+        }.get(chart_type, chart_type)
 
     def create_visualization(
         self,
@@ -135,18 +152,18 @@ class Visualizer:
             "drug_id": "ID",
             "drug_name": "Name",
             "score": "Score",
-            "shared_gene_counts": "# Shared Genes",
+            "num_of_shared_genes_in_path": "# Shared Genes",
             "existing": "Existing",
-            "overlap_pathways_count": "# Overlap Pathways",
+            "num_of_shared_pathways": "# Overlap Pathways",
             "key_genes": "Key Genes",
-            "num_key_genes": "# Key Genes",
+            "num_of_key_genes": "# Key Genes",
             "drug_degree": "Degree",
-            "number_of_shared_genes": "# Shared Genes",
+            "num_of_shared_genes": "# Shared Genes",
             "num_of_shared_diseases": "# Shared Diseases",
             "shared_disease_names": "Shared Disease Names",
             "paths": "Paths",
             "shared_gene_names": "Shared Gene Names",
-            "overlap_pathways": "Overlap Pathways",
+            "shared_pathways": "Overlap Pathways",
         }
 
         df_renamed = df.rename(columns=column_rename)
@@ -159,7 +176,7 @@ class Visualizer:
             formatters={
                 "Score": lambda x: f"{x:.3f}",
                 "Existing": lambda x: "Yes" if x else "No",
-            }
+            },
         )
 
     @staticmethod
@@ -218,10 +235,95 @@ We observe that:
 - A smaller subset of drugs falls into the upper tail, indicating higher potential for anti-scarring efficacy.
 
 - The model effectively distinguishes a few high-confidence candidates, which are worth prioritizing for further validation or analysis.
-        """.replace(
-            "\n", "\\n"
+        """
+
+        return interpretation
+
+    @staticmethod
+    def plot_predicted_score_boxplot(
+        df: pd.DataFrame, filtered_df: pd.DataFrame, output_path: str
+    ) -> str:
+        """Plot the predicted score boxplot"""
+        import plotly.express as px
+        import pandas as pd
+
+        # 构建 drug_id 的 set，用于高效匹配
+        new_candidate_ids = set(
+            filtered_df[~filtered_df["existing"]]["drug_id"].astype(str)
+        )
+        num_existing_drugs = df["existing"].value_counts().get(True, 0)
+        num_new_candidates = filtered_df[~filtered_df["existing"]].shape[0]
+        num_others = df.shape[0] - num_existing_drugs - num_new_candidates
+
+        # 添加 'group' 列
+        def classify_group(row):
+            drug_id = str(row["drug_id"])
+            if row["existing"]:
+                return f"Existing drugs in Influenza ({num_existing_drugs})"
+            elif drug_id in new_candidate_ids:
+                return f"Predicted new candidates ({num_new_candidates})"
+            else:
+                return f"All other drugs ({num_others})"
+
+        df["group"] = df.apply(classify_group, axis=1)
+        df["formatted_drug_name"] = df["drug_name"].str.title()
+
+        # 绘制箱线图
+        fig = px.box(
+            df,
+            x="group",
+            y="score",
+            points="outliers",
+            color="group",
+            color_discrete_map={
+                f"Existing drugs in the disease ({num_existing_drugs})": "blue",
+                f"Predicted new candidates ({num_new_candidates})": "red",
+                f"All other drugs ({num_others})": "lightgrey",
+            },
+            title="Predicted Score Distribution for Drug Candidates",
+            labels={"score": "Predicted Score", "group": ""},
         )
 
+        # 更新布局为纵向 portrait
+        fig.update_layout(
+            plot_bgcolor="white",
+            height=940,
+            width=800,
+            font=dict(size=28),
+            xaxis=dict(showline=True, linecolor="black", tickangle=20),
+            yaxis=dict(showline=True, linecolor="black", title="Predicted Score"),
+            showlegend=False,
+            title=None,
+        )
+
+        fig.write_image(output_path, width=800, height=940, scale=2)
+
+        # Generate plotly json file and load it in HTML
+        json_path = output_path.replace(".png", ".json")
+        fig.write_json(json_path)
+
+        interpretation = f"""#### Predicted Score Distribution by Knowledge Graph Inclusion
+
+This box plot compares the predicted scores between drugs that exist in the knowledge graph and those that do not.
+
+- The x-axis indicates drug presence in the biomedical knowledge graph:
+
+  - "Existing drugs in the disease ({num_existing_drugs})"
+
+  - "Predicted new candidates ({num_new_candidates})"
+
+  - "All other drugs ({num_others})"
+
+- The y-axis shows the predicted scores assigned by the GNN model.
+
+Key observations:
+
+- Drugs already present in the knowledge graph tend to have much higher scores, suggesting that the model successfully learns from known associations.
+
+- In contrast, most candidate drugs not present in the graph are scored low, but a small number receive high predicted scores, representing potential novel drug-disease associations.
+
+- This validates the model's capacity for both confirming known links and discovering promising new ones.
+        """
         return interpretation
 
     @staticmethod
@@ -265,7 +367,7 @@ We observe that:
         ]
 
         similarity_df = pd.DataFrame(
-            similarity_matrix, index=short_drug_names, columns=short_drug_names
+            similarity_matrix, index=drug_names, columns=drug_names
         )
 
         # Plot using plotly
@@ -315,7 +417,7 @@ We observe that:
 
         # 2. Number of key genes distribution
         sns.histplot(
-            df["num_key_genes"], bins=20, ax=ax2, color="lightgreen", alpha=0.7
+            df["num_of_key_genes"], bins=20, ax=ax2, color="lightgreen", alpha=0.7
         )
         ax2.set_title("Number of Key Genes Distribution", fontweight="bold")
         ax2.set_xlabel("Number of Key Genes")
@@ -328,13 +430,13 @@ We observe that:
         ax3.set_ylabel("Predicted Score")
 
         # 4. Number of key genes vs score scatter plot
-        sns.scatterplot(data=df, x="num_key_genes", y="score", ax=ax4, alpha=0.6)
+        sns.scatterplot(data=df, x="num_of_key_genes", y="score", ax=ax4, alpha=0.6)
         ax4.set_title("Number of Key Genes vs Predicted Score", fontweight="bold")
         ax4.set_xlabel("Number of Key Genes")
         ax4.set_ylabel("Predicted Score")
 
         # 5. Shared gene number vs score scatter plot
-        sns.scatterplot(data=df, x="shared_gene_counts", y="score", ax=ax5, alpha=0.6)
+        sns.scatterplot(data=df, x="num_of_shared_genes_in_path", y="score", ax=ax5, alpha=0.6)
         ax5.set_title("Number of Shared Genes vs Predicted Score", fontweight="bold")
         ax5.set_xlabel("Number of Shared Genes")
         ax5.set_ylabel("Predicted Score")
@@ -382,7 +484,7 @@ We observe that:
         # 绘图
         fig = px.scatter(
             data_frame=df,
-            x="shared_gene_counts",
+            x="num_of_shared_genes_in_path",
             y="score",
             hover_data=["formatted_drug_name"],
             color="group",
@@ -443,9 +545,7 @@ Key insights:
 - While a general upward trend is visible (higher shared gene count may correspond to slightly higher scores), the correlation is weak, suggesting the GNN model captures more complex features than simple gene overlap.
 
 This visualization supports the idea that while shared gene information is relevant, it alone is not sufficient to explain the model's predictions — showcasing the added value of using a graph-based model.
-        """.replace(
-            "\n", "\\n"
-        )
+        """
 
         return interpretation
 
@@ -461,7 +561,7 @@ This visualization supports the idea that while shared gene information is relev
 
         # 1. Shared gene number distribution
         sns.histplot(
-            df["number_of_shared_genes"], bins=20, ax=ax1, color="lightcoral", alpha=0.7
+            df["num_of_shared_genes"], bins=20, ax=ax1, color="lightcoral", alpha=0.7
         )
         ax1.set_title("Shared Gene Number Distribution", fontweight="bold")
         ax1.set_xlabel("Number of Shared Genes")
@@ -469,7 +569,7 @@ This visualization supports the idea that while shared gene information is relev
 
         # 2. 重叠通路数量分布
         sns.histplot(
-            df["overlap_pathways_count"],
+            df["num_of_shared_pathways"],
             bins=20,
             ax=ax2,
             color="lightyellow",
@@ -481,7 +581,7 @@ This visualization supports the idea that while shared gene information is relev
 
         # 3. 共享基因数量 vs 得分
         sns.scatterplot(
-            data=df, x="number_of_shared_genes", y="score", ax=ax3, alpha=0.6
+            data=df, x="num_of_shared_genes", y="score", ax=ax3, alpha=0.6
         )
         ax3.set_title("Number of Shared Genes vs Predicted Score", fontweight="bold")
         ax3.set_xlabel("Number of Shared Genes")
@@ -489,7 +589,7 @@ This visualization supports the idea that while shared gene information is relev
 
         # 4. 重叠通路数量 vs 得分
         sns.scatterplot(
-            data=df, x="overlap_pathways_count", y="score", ax=ax4, alpha=0.6
+            data=df, x="num_of_shared_pathways", y="score", ax=ax4, alpha=0.6
         )
         ax4.set_title(
             "Number of Overlapping Pathways vs Predicted Score", fontweight="bold"
@@ -580,7 +680,7 @@ This visualization supports the idea that while shared gene information is relev
         df: pd.DataFrame, filtered_df: pd.DataFrame, output_path: str
     ) -> str:
         plt.figure(figsize=(10, 6))
-        sns.histplot(df["shared_gene_counts"], bins=30, color="lightgreen", alpha=0.7)
+        sns.histplot(df["num_of_shared_genes_in_path"], bins=30, color="lightgreen", alpha=0.7)
         plt.title(
             "Number of Shared Genes Between Drugs and Diseases",
             fontsize=14,
@@ -627,7 +727,7 @@ This visualization supports the idea that while shared gene information is relev
         df: pd.DataFrame, filtered_df: pd.DataFrame, output_path: str
     ) -> str:
         plt.figure(figsize=(10, 6))
-        sns.histplot(df["overlap_pathways_count"], bins=20, color="orange", alpha=0.7)
+        sns.histplot(df["num_of_shared_pathways"], bins=20, color="orange", alpha=0.7)
         plt.title(
             "Number of Overlapping Pathways Between Drugs and Diseases",
             fontsize=14,
@@ -652,7 +752,7 @@ This visualization supports the idea that while shared gene information is relev
         df: pd.DataFrame, filtered_df: pd.DataFrame, output_path: str
     ) -> str:
         plt.figure(figsize=(10, 6))
-        sns.histplot(df["num_key_genes"], bins=20, color="purple", alpha=0.7)
+        sns.histplot(df["num_of_key_genes"], bins=20, color="purple", alpha=0.7)
         plt.title("Number of Key Genes Distribution", fontsize=14, fontweight="bold")
         plt.xlabel("Number of Key Genes")
         plt.ylabel("Drug Count")
@@ -668,23 +768,36 @@ This visualization supports the idea that while shared gene information is relev
         )
         return interpretation
 
+
     @staticmethod
     def plot_existing_vs_predicted(
         df: pd.DataFrame, filtered_df: pd.DataFrame, output_path: str
     ) -> str:
+        import matplotlib.pyplot as plt
+
         plt.figure(figsize=(4, 3))
         existing_counts = df["existing"].value_counts()
+        labels = ["Predicted Drugs", "Known Drugs"]
         colors = ["lightcoral", "lightblue"]
+        total = existing_counts.sum()
+
+        def make_autopct(values):
+            def my_autopct(pct):
+                count = int(round(pct * total / 100.0))
+                return f"{count} ({pct:.1f}%)"
+
+            return my_autopct
+
         plt.pie(
             existing_counts.values,
-            labels=["Predicted Drugs", "Known Drugs"],
-            autopct="%1.1f%%",
+            labels=labels,
+            autopct=make_autopct(existing_counts.values),
             colors=colors,
             startangle=90,
+            textprops={"fontsize": 10},
         )
-        plt.title(
-            "Ratio of Known Drugs to Predicted Drugs", fontsize=14, fontweight="bold"
-        )
+
+        plt.title("Ratio of Known Drugs to Predicted Drugs", fontsize=12, fontweight="bold")
         plt.tight_layout()
         plt.savefig(output_path, dpi=300, bbox_inches="tight")
         plt.close()
@@ -737,11 +850,14 @@ This visualization supports the idea that while shared gene information is relev
             .replace("-", "_")
         )
 
+        def replace_newlines(text):
+            return text.replace("\n", "\\n").replace("'", "\\'")
+
         return f"""
         <div id="{chart_id}"></div>
         <script>
             document.getElementById('{chart_id}').innerHTML =
-            marked.parse('{chart["interpretation"]}');
+            marked.parse('{replace_newlines(chart["interpretation"])}');
         </script>
         """
 
@@ -784,7 +900,7 @@ This visualization supports the idea that while shared gene information is relev
     <title>{title}</title>
     <style>
         body {{ font-family: Arial, sans-serif; margin: 20px; background-color: #f5f5f5; }}
-        .container {{ max-width: 1200px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }}
+        .container {{ margin: 0 auto; width: 80vw; background-color: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }}
         h1 {{ color: #2c3e50; text-align: center; border-bottom: 3px solid #3498db; padding-bottom: 10px; }}
         h2 {{ color: #34495e; margin-top: 30px; }}
         .stats {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 20px 0; }}
@@ -793,7 +909,8 @@ This visualization supports the idea that while shared gene information is relev
         .stat-label {{ font-size: 0.9em; opacity: 0.9; }}
         .chart-section {{ margin: 30px 0; }}
         .chart-container {{ text-align: center; margin: 20px 0; }}
-        .chart-container img {{ max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }}
+        .chart-container img {{ max-width: 100%; max-height: 900px; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }}
+        .plot-container {{ display: flex; justify-content: center; align-items: center; }}
         .interpretation {{ background-color: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid #3498db; }}
         table {{ width: 100%; border-collapse: collapse; margin: 20px 0; }}
         th, td {{ padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }}
@@ -889,19 +1006,7 @@ This visualization supports the idea that while shared gene information is relev
 
         # Add charts
         for chart_type, chart_info in charts.items():
-            chart_title = {
-                "score_distribution": "Drug Predicted Score Distribution",
-                "disease_similarity_heatmap": "Drug Similarity Heatmap",
-                "network_centrality": "Network Centrality Analysis",
-                "shared_genes_pathways": "Shared Genes and Pathways Analysis",
-                "drug_disease_network": "Drug Similarity Network",
-                "shared_gene_count": "Number of Shared Genes Between Drugs and Diseases",
-                "shared_gene_count_vs_score": "Shared Gene Count vs Predicted Score",
-                "score_vs_degree": "Drug Degree vs Predicted Score",
-                "overlap_pathways": "Number of Overlapping Pathways Between Drugs and Diseases",
-                "key_genes_distribution": "Number of Key Genes Distribution",
-                "existing_vs_predicted": "Ratio of Known Drugs to Predicted Drugs",
-            }.get(chart_type, chart_type)
+            chart_title = self.get_chart_title(chart_type)
 
             html_content += f"""
         <div class="chart-section">
