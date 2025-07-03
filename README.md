@@ -1,10 +1,10 @@
 # BioMedGPS Explainer [中文文档](./README_zh.md) | [English Documentation](./README.md)
 
-A comprehensive network medicine-based drug discovery and visualization toolkit for biomedical research.
+A comprehensive network medicine-based drug repurposing and visualization toolkit for biomedical research.
 
 ## Overview
 
-BioMedGPS Explainer is a powerful Python toolkit designed for drug discovery analysis using Knowledge Graph Embedding (KGE) models. It provides end-to-end capabilities for predicting potential drugs for specific diseases, analyzing drug-disease-gene relationships, and generating comprehensive visualization reports.
+BioMedGPS Explainer is a powerful Python toolkit designed for drug repurposing analysis using Knowledge Graph Embedding (KGE) models. It provides end-to-end capabilities for predicting potential drugs for specific diseases, analyzing drug-disease-gene relationships, and generating comprehensive visualization reports.
 
 ## Key Features
 
