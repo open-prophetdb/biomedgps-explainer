@@ -1,211 +1,322 @@
-# drugs4disease
+# BioMedGPS Explainer [中文文档](./README_zh.md) | [English Documentation](./README.md)
 
-基于知识图谱的潜在药物发现与可视化工具包。
+A comprehensive network medicine-based drug discovery and visualization toolkit for biomedical research.
 
-## 功能特性
+## Overview
 
-- **药物预测**: 基于知识图谱嵌入(KGE)模型预测潜在药物
-- **网络分析**: 药物-疾病-基因路径分析、中心性计算、PPI网络分析
-- **通路富集**: 药物与疾病的通路重叠分析
-- **共享注释**: 统计药物与疾病的共享基因和疾病
-- **智能筛选**: 支持复杂逻辑表达式的药物筛选
-- **可视化**: 自动生成图表和解读报告
+BioMedGPS Explainer is a powerful Python toolkit designed for drug discovery analysis using Knowledge Graph Embedding (KGE) models. It provides end-to-end capabilities for predicting potential drugs for specific diseases, analyzing drug-disease-gene relationships, and generating comprehensive visualization reports.
 
-## 安装方法
+## Key Features
+
+- **🔬 Drug Prediction**: Predict potential drugs using Knowledge Graph Embedding (KGE) models
+- **🌐 Network Analysis**: Comprehensive drug-disease-gene pathway analysis with centrality calculations and PPI network analysis
+- **🛤️ Pathway Enrichment**: Advanced pathway overlap analysis between drugs and diseases
+- **🧬 Shared Annotations**: Statistical analysis of shared genes and diseases between drugs and diseases
+- **🔍 Smart Filtering**: Advanced drug filtering with support for complex logical expressions
+- **📊 Visualization**: Automatic chart generation with interactive plots and comprehensive HTML reports
+- **📈 Data Validation**: Built-in data validation and automatic ZIP file decompression
+- **🎯 Explainability**: AI-powered drug explanation generation for research insights
+
+## Installation
+
+### Prerequisites
+
+- Python 3.8 or higher
+- pip package manager
+
+### Install from Source
 
 ```bash
-pip install .
+# Clone the repository
+git clone <repository-url>
+cd biomedgps-explainer
+
+# Install the package in development mode
+pip install -e .
 ```
 
-## 数据准备
+### Install Dependencies
 
-本工具使用BioMedGPS v2知识图谱嵌入模型。支持两种数据文件准备方式：
+The package will automatically install all required dependencies:
 
-### 方法1：使用ZIP压缩文件（推荐）
-将BioMedGPS模型ZIP文件放在模型目录下，脚本会自动检测并解压缩：
+- `click>=8.0.0` - Command line interface
+- `pandas>=1.3.0` - Data manipulation
+- `numpy>=1.21.0` - Numerical computing
+- `matplotlib>=3.5.0` - Basic plotting
+- `seaborn>=0.11.0` - Statistical visualization
+- `networkx>=2.6.0` - Network analysis
+- `gseapy>=0.12.0` - Gene set enrichment analysis
+- `gprofiler-official>=1.0.0` - Functional profiling
+- `torch>=1.9.0` - Deep learning framework
+- `openpyxl>=3.0.0` - Excel file handling
+- `requests>=2.25.0` - HTTP requests
+- `scikit-learn>=1.0.0` - Machine learning utilities
+- `plotly>=5.0.0` - Interactive visualizations
 
-```
-data/
-└── biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-    ├── annotated_entities.tsv.zip      # 实体注释信息（ZIP格式）
-    ├── entity_embeddings.tsv.zip       # 实体嵌入向量（ZIP格式）
-    ├── knowledge_graph.tsv.zip         # 知识图谱三元组（ZIP格式）
-    └── relation_type_embeddings.tsv.zip # 关系类型嵌入向量（ZIP格式）
-```
+## Quick Start
 
-### 方法2：使用解压缩后的TSV文件
-手动解压缩模型文件到以下位置：
+### 1. Data Preparation
 
-```
-data/
-└── biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-    ├── annotated_entities.tsv      # 实体注释信息
-    ├── entity_embeddings.tsv       # 实体嵌入向量
-    ├── knowledge_graph.tsv         # 知识图谱三元组
-    └── relation_type_embeddings.tsv # 关系类型嵌入向量
-```
+First, prepare your BioMedGPS model files. The toolkit supports both ZIP and uncompressed formats:
 
-**自动解压缩功能**：脚本会自动检测模型目录下的ZIP文件（如 `annotated_entities.tsv.zip`）并解压缩为对应的TSV文件。如果TSV文件已存在，则跳过解压缩步骤。
-
-详细的数据文件格式说明请参考 `data/README.md`。
-
-## 示例脚本使用
-
-### 1. 验证数据文件
 ```bash
+# Create the data directory
+mkdir -p data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+
+# Option 1: Place ZIP files (recommended)
+# The toolkit will automatically decompress them
+cp your_model_files.zip data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+
+# Option 2: Place uncompressed TSV files
+cp annotated_entities.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+cp knowledge_graph.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+cp entity_embeddings.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+cp relation_type_embeddings.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+```
+
+### 2. Validate Data Files
+
+```bash
+# Validate your data files
 python3 examples/run_data_validation.py
 ```
 
-### 2. 查看数据统计
-```bash
-python3 examples/run_data_statistics.py
-```
+### 3. Run Complete Analysis
 
-### 3. 安装依赖并运行完整示例
 ```bash
-pip install -e .
+# Run the complete drug discovery pipeline
 python3 examples/run_full_example.py
 ```
 
-## CLI 用法示例
-
-### 1. 一键完成所有分析
-```bash
-drugs4disease run --disease "MESH:D001249" \
-  --entity-file ./data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/annotated_entities.tsv \
-  --knowledge-graph ./data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/knowledge_graph.tsv \
-  --entity-embeddings ./data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/entity_embeddings.tsv \
-  --relation-embeddings ./data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/relation_type_embeddings.tsv \
-  --output-dir ./results \
-  --model TransE_l2 \
-  --top-n-diseases 50 \
-  --gamma 12.0 \
-  --threshold 0.5 \
-  --relation-type "DGIDB::OTHER::Gene:Compound"
-```
-
-### 2. 筛选药物列表
-```bash
-drugs4disease filter --expression 'score >= 0.5 && num_of_shared_genes_in_path > 0 && existing == False' \
-  --input ./results/annotated_drugs.xlsx \
-  --output ./results/final_drugs.xlsx
-```
-
-### 3. 生成图表与解读
-```bash
-# 生成所有类型的可视化
-drugs4disease visualize --input ./results/annotated_drugs.xlsx --output-dir ./results/figures
-
-# 生成特定类型的可视化
-drugs4disease visualize --input ./results/annotated_drugs.xlsx --output-dir ./results/figures --viz-type score_distribution
-```
-
-## 参数说明
-
-### run 命令参数
-- `--disease`: 疾病名称或ID (必需)
-- `--entity-file`: 实体信息文件 (必需)
-- `--knowledge-graph`: 知识图谱文件 (必需)
-- `--entity-embeddings`: 实体嵌入文件 (必需)
-- `--relation-embeddings`: 关系嵌入文件 (必需)
-- `--output-dir`: 输出目录 (必需)
-- `--model`: KGE模型类型 (默认: TransE_l2)
-- `--top-n-diseases`: 相似疾病数量 (默认: 100)
-- `--gamma`: Gamma参数 (默认: 12.0)
-- `--threshold`: 药物筛选阈值 (默认: 0.5)
-- `--relation-type`: 关系类型 (默认: DGIDB::OTHER::Gene:Compound)
-
-### filter 命令参数
-- `--expression`: 筛选表达式，支持 `&&`、`||`、`==`、`!=`、`>=`、`<=` 等
-- `--input`: 输入文件 annotated_drugs.xlsx
-- `--output`: 输出文件 final_drugs.xlsx
-
-### visualize 命令参数
-- `--input`: 输入文件 annotated_drugs.xlsx
-- `--output-dir`: 图表输出目录
-- `--viz-type`: 可视化类型 (默认: all，可选: score_distribution, top_drugs_bar, disease_similarity_heatmap, network_centrality, shared_genes_pathways, drug_disease_network)
-
-## 输出文件结构
-
-```
-results/
-  annotated_drugs.xlsx          # 完整注释的药物列表
-  predicted_drugs.xlsx          # 初步预测结果
-  shared_genes_pathways.xlsx    # 共享基因和通路
-  shared_diseases.xlsx          # 共享疾病
-  network_annotations.xlsx      # 网络分析结果
-  filtered_drugs.xlsx           # 筛选后药物
-  figures/
-    score_distribution.png      # 得分分布图
-    top_drugs_bar.png           # 前N药物柱状图
-    disease_similarity_heatmap.png # 疾病相似性热图
-    network_centrality.png      # 网络中心性分析
-    shared_genes_pathways.png   # 共享基因通路分析
-    drug_disease_network.png    # 药物-疾病网络图
-    analysis_report.html        # 综合分析报告
-```
-
-## 输出字段说明
-
-`annotated_drugs.xlsx` 包含以下字段：
-- `drug_id`: 药物ID
-- `drug_name`: 药物名称
-- `score`: KGE预测得分
-- `num_of_shared_genes_in_path`: 与疾病共享的基因数量
-- `paths`: 药物-疾病两跳路径
-- `existing`: 是否为已知治疗药物
-- `num_of_shared_pathways`: 重叠通路数量
-- `shared_pathways`: 重叠通路名称
-- `key_genes`: 关键基因
-- `num_of_key_genes`: 关键基因数量
-- `drug_degree`: 药物在知识图谱中的连接度
-- `num_of_shared_genes`: 共享基因数量（详细统计）
-- `shared_gene_names`: 共享基因名称
-- `num_of_shared_diseases`: 共享疾病数量
-- `shared_disease_names`: 共享疾病名称
-
-## 筛选表达式示例
+### 4. Use Command Line Interface
 
 ```bash
-# 高分且非现有药物
-'score >= 0.7 && existing == False'
+# Run analysis with custom parameters
+drugs4disease run --disease MONDO:0004979 --output-dir results/
 
-# 有共享基因且重叠通路
-'num_of_shared_genes_in_path > 0 && num_of_shared_pathways > 0'
+# Generate visualizations
+drugs4disease visualize --input-file results/annotated_drugs.xlsx --output-dir results/visualizations/
 
-# 复杂条件组合
-'score >= 0.5 && num_of_shared_genes_in_path > 2 && drug_degree >= 10 && existing == False'
-
-# 多条件或关系
-'score >= 0.8 || (num_of_shared_genes_in_path > 5 && num_of_shared_pathways > 3)'
+# Filter drugs
+drugs4disease filter --input-file results/annotated_drugs.xlsx --expression "score > 0.6 and existing == False"
 ```
 
-## 单元测试
+## Usage Examples
+
+### Python API
+
+```python
+from drugs4disease.core import DrugDiseaseCore
+from drugs4disease.filter import DrugFilter
+from drugs4disease.visualizer import Visualizer
+
+# Initialize components
+core = DrugDiseaseCore()
+drug_filter = DrugFilter()
+visualizer = Visualizer()
+
+# Run complete analysis pipeline
+core.run_full_pipeline(
+    disease_id="MONDO:0004979",  # Disease ID
+    output_dir="results/",
+    model='TransE_l2',
+    top_n_diseases=50,
+    gamma=12.0,
+    threshold=0.5,
+    top_n_drugs=100
+)
+
+# Apply filtering
+filter_expression = "pvalue < 0.05 and num_of_shared_genes_in_path >= 1 and existing == False"
+drug_filter.filter_drugs(
+    input_file="results/annotated_drugs.xlsx",
+    expression=filter_expression,
+    output_file="results/filtered_drugs.xlsx"
+)
+
+# Generate visualization report
+visualizer.generate_report(
+    data_file="results/filtered_drugs.xlsx",
+    output_file="results/analysis_report.html",
+    title="Drug Discovery Analysis Report"
+)
+```
+
+### Advanced Filtering
+
+The toolkit supports complex logical expressions for drug filtering:
+
+```python
+# Filter expressions examples
+expressions = [
+    # High-scoring new drugs
+    "score > 0.7 and existing == False",
+    
+    # Drugs with shared genes and pathways
+    "num_of_shared_genes_in_path >= 2 and num_of_shared_pathways >= 1",
+    
+    # Network-central drugs
+    "drug_degree > 10 and num_of_key_genes >= 3",
+    
+    # Complex combination
+    "score > 0.6 and existing == False and (num_of_shared_genes_in_path >= 1 or num_of_shared_pathways >= 1)"
+]
+```
+
+## Output Files
+
+The toolkit generates comprehensive output files:
+
+### Main Results
+- `annotated_drugs.xlsx` - Complete drug analysis with all annotations
+- `filtered_drugs.xlsx` - Filtered drug candidates based on criteria
+
+### Visualization Reports
+- `analysis_report.html` - Interactive HTML report with all visualizations
+- Individual chart files (PNG/JSON) for each analysis type
+
+### Analysis Components
+- `predicted_drugs.xlsx` - Initial drug predictions
+- `shared_genes_pathways.xlsx` - Gene and pathway overlap analysis
+- `shared_diseases.xlsx` - Disease similarity analysis
+- `network_annotations.xlsx` - Network centrality features
+
+## Visualization Types
+
+The toolkit generates 12 different types of visualizations:
+
+1. **Score Distribution** - Predicted score distribution of candidate drugs
+2. **Predicted Score Boxplot** - Score distribution by knowledge graph inclusion
+3. **Disease Similarity Heatmap** - Drug similarity based on shared diseases
+4. **Network Centrality** - Drug network centrality analysis
+5. **Shared Genes and Pathways** - Comprehensive gene/pathway overlap analysis
+6. **Drug Similarity Network** - Interactive drug relationship network
+7. **Shared Gene Count** - Distribution of shared genes between drugs and diseases
+8. **Score vs Degree** - Relationship between network degree and predicted scores
+9. **Shared Gene Count vs Score** - Interactive scatter plot of gene overlap vs scores
+10. **Shared Pathways** - Distribution of overlapping pathways
+11. **Key Genes Distribution** - Distribution of key genes in PPI networks
+12. **Existing vs Predicted** - Ratio of known to predicted drugs
+
+## Data Format
+
+### Input Data Structure
+
+The toolkit expects BioMedGPS format data files:
+
+```
+data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+├── annotated_entities.tsv      # Entity annotations
+├── knowledge_graph.tsv         # Knowledge graph triples
+├── entity_embeddings.tsv       # Entity embeddings
+└── relation_type_embeddings.tsv # Relation embeddings
+```
+
+### Entity File Format
+```tsv
+id  label   name
+MONDO:0004979  Disease  asthma
+CHEBI:12345    Compound aspirin
+```
+
+### Knowledge Graph Format
+```tsv
+source_id  source_type  source_name  target_id  target_type  target_name  relation_type
+CHEBI:12345  Compound  aspirin  MONDO:0004979  Disease  asthma  GNBR::T::Compound:Disease
+```
+
+## Configuration
+
+### Model Parameters
+
+- `model`: KGE model type (default: 'TransE_l2')
+- `gamma`: Margin parameter for KGE training (default: 12.0)
+- `threshold`: Drug filtering threshold (default: 0.5)
+- `top_n_diseases`: Number of similar diseases to consider (default: 100)
+- `top_n_drugs`: Number of drugs to analyze (default: 1000)
+
+### Filtering Options
+
+The filtering system supports:
+- Numerical comparisons (`>`, `<`, `>=`, `<=`, `==`, `!=`)
+- Logical operators (`and`, `or`, `not`)
+- Boolean fields (`existing`, `is_key_gene`)
+- String matching and pattern matching
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Missing Data Files**
+   ```bash
+   # Check if files exist
+   python3 examples/run_data_validation.py
+   ```
+
+2. **ZIP File Decompression**
+   - The toolkit automatically handles ZIP file decompression
+   - Ensure ZIP files are in the correct directory structure
+
+3. **Memory Issues**
+   - Reduce `top_n_drugs` parameter for large datasets
+   - Use smaller `top_n_diseases` values
+
+4. **Visualization Errors**
+   - Ensure all required plotting libraries are installed
+   - Check file permissions for output directories
+
+### Getting Help
 
 ```bash
-python -m unittest discover tests
+# Check CLI help
+drugs4disease --help
+drugs4disease run --help
+drugs4disease filter --help
+drugs4disease visualize --help
 ```
 
-## 依赖
+## Contributing
 
-- Python 3.8+
-- click>=8.0.0
-- pandas>=1.3.0
-- numpy>=1.21.0
-- matplotlib>=3.5.0
-- seaborn>=0.11.0
-- networkx>=2.6.0
-- gseapy>=0.12.0
-- gprofiler-official>=1.0.0
-- torch>=1.9.0
-- openpyxl>=3.0.0
-- requests>=2.25.0
-- scikit-learn>=1.0.0
+We welcome contributions! Please see our contributing guidelines for details.
 
-## 贡献
+### Development Setup
 
-欢迎提交 issue 或 PR 以完善功能。
+```bash
+# Clone and setup development environment
+git clone <repository-url>
+cd biomedgps-explainer
+pip install -e .
+pip install -r requirements-dev.txt
 
-## 许可证
+# Run tests
+python -m pytest tests/
+```
 
-MIT License 
+## Citation
+
+If you use BioMedGPS Explainer in your research, please cite:
+
+```bibtex
+@software{biomedgps_explainer,
+  title={BioMedGPS Explainer: A Network Medicine-Based Drug Discovery Toolkit},
+  author={Yang, Jingcheng},
+  year={2024},
+  url={https://github.com/open-prophetdb/biomedgps-explainer}
+}
+```
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Contact
+
+- **Author**: Jingcheng Yang
+- **Email**: yjcyxky@163.com
+- **Project**: [BioMedGPS Explainer](https://github.com/open-prophetdb/biomedgps-explainer)
+
+## Acknowledgments
+
+- BioMedGPS team for the knowledge graph embeddings
+- Open-source community for the underlying libraries
+- Research community for feedback and contributions

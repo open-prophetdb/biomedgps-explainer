@@ -1,96 +1,96 @@
-# 示例脚本
+# Example Scripts
 
-本目录包含drugs4disease包的使用示例脚本。
+This directory contains example scripts for using the drugs4disease package.
 
-## 脚本说明
+## Script Descriptions
 
 ### run_data_validation.py
-**用途**: 验证BioMedGPS数据文件的存在和格式，支持自动解压缩ZIP文件
-**依赖**: 无额外依赖，仅使用Python标准库
-**运行**: `python3 examples/run_data_validation.py`
+**Purpose**: Validate the existence and format of BioMedGPS data files, with support for automatic ZIP file decompression
+**Dependencies**: No additional dependencies, uses only Python standard library
+**Run**: `python3 examples/run_data_validation.py`
 
-功能：
-- 自动检测并解压缩ZIP格式的模型文件
-- 验证以下文件：
+Features:
+- Automatically detect and decompress ZIP format model files
+- Validate the following files:
   - `data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/annotated_entities.tsv`
   - `data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/knowledge_graph.tsv`
   - `data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/entity_embeddings.tsv`
   - `data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/relation_type_embeddings.tsv`
 
 ### run_data_statistics.py
-**用途**: 展示BioMedGPS数据文件的基本信息和统计，支持自动解压缩ZIP文件
-**依赖**: 无额外依赖，仅使用Python标准库
-**运行**: `python3 examples/run_data_statistics.py`
+**Purpose**: Display basic information and statistics of BioMedGPS data files, with support for automatic ZIP file decompression
+**Dependencies**: No additional dependencies, uses only Python standard library
+**Run**: `python3 examples/run_data_statistics.py`
 
-功能：
-- 自动检测并解压缩ZIP格式的模型文件
-- 统计实体类型分布
-- 统计关系类型分布
-- 显示嵌入向量维度
-- 提供数据文件概览
+Features:
+- Automatically detect and decompress ZIP format model files
+- Statistics on entity type distribution
+- Statistics on relation type distribution
+- Display embedding vector dimensions
+- Provide data file overview
 
 ### run_full_example.py
-**用途**: 完整的药物发现分析工作流程演示，支持自动解压缩ZIP文件
-**依赖**: 需要安装drugs4disease包及其依赖
-**运行**: `python3 examples/run_full_example.py`
+**Purpose**: Complete drug discovery analysis workflow demonstration, with support for automatic ZIP file decompression
+**Dependencies**: Requires installation of drugs4disease package and its dependencies
+**Run**: `python3 examples/run_full_example.py`
 
-完整流程：
-1. 自动检测并解压缩ZIP格式的模型文件
-2. 运行药物预测分析
-3. 应用过滤条件
-4. 生成可视化报告
-5. 输出综合分析报告
+Complete workflow:
+1. Automatically detect and decompress ZIP format model files
+2. Run drug prediction analysis
+3. Apply filtering conditions
+4. Generate visualization reports
+5. Output comprehensive analysis report
 
-## 自动解压缩功能
+## Automatic Decompression Feature
 
-所有脚本都支持自动检测和解压缩ZIP格式的模型文件：
+All scripts support automatic detection and decompression of ZIP format model files:
 
-### 支持的ZIP文件格式
-脚本会自动检测模型目录下的以下ZIP文件：
-- `annotated_entities.tsv.zip` - 实体注释信息
-- `knowledge_graph.tsv.zip` - 知识图谱三元组
-- `entity_embeddings.tsv.zip` - 实体嵌入向量
-- `relation_type_embeddings.tsv.zip` - 关系类型嵌入向量
+### Supported ZIP File Formats
+Scripts automatically detect the following ZIP files in the model directory:
+- `annotated_entities.tsv.zip` - Entity annotation information
+- `knowledge_graph.tsv.zip` - Knowledge graph triples
+- `entity_embeddings.tsv.zip` - Entity embedding vectors
+- `relation_type_embeddings.tsv.zip` - Relation type embedding vectors
 
-### 解压缩逻辑
-1. 检查模型目录是否存在
-2. 对于每个必需的TSV文件，检查是否存在对应的ZIP文件
-3. 如果TSV文件不存在但ZIP文件存在，则自动解压缩
-4. 解压缩完成后继续正常流程
+### Decompression Logic
+1. Check if the model directory exists
+2. For each required TSV file, check if the corresponding ZIP file exists
+3. If the TSV file doesn't exist but the ZIP file exists, automatically decompress
+4. Continue normal workflow after decompression is complete
 
-### 使用场景
-- **ZIP格式**: 将模型文件以ZIP格式放在模型目录下，脚本会自动解压缩
-- **已解压缩**: 如果TSV文件已存在，脚本会直接使用，跳过解压缩
-- **混合格式**: 支持部分文件为ZIP格式，部分文件已解压缩
+### Usage Scenarios
+- **ZIP Format**: Place model files in ZIP format in the model directory, scripts will automatically decompress
+- **Already Decompressed**: If TSV files already exist, scripts will use them directly, skipping decompression
+- **Mixed Format**: Supports partial files in ZIP format, partial files already decompressed
 
-## 使用顺序
+## Usage Order
 
-建议按以下顺序运行示例：
+Recommended order for running examples:
 
-1. **首先验证数据文件**:
+1. **First validate data files**:
    ```bash
    python3 examples/run_data_validation.py
    ```
 
-2. **查看数据统计**:
+2. **View data statistics**:
    ```bash
    python3 examples/run_data_statistics.py
    ```
 
-3. **安装依赖**:
+3. **Install dependencies**:
    ```bash
    pip install -e .
    ```
 
-4. **运行完整示例**:
+4. **Run complete example**:
    ```bash
    python3 examples/run_full_example.py
    ```
 
-## 数据文件准备
+## Data File Preparation
 
-### 方法1：使用ZIP压缩文件（推荐）
-1. 将BioMedGPS模型ZIP文件放在模型目录下：
+### Method 1: Using ZIP Compressed Files (Recommended)
+1. Place BioMedGPS model ZIP files in the model directory:
    ```
    data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
    ├── annotated_entities.tsv.zip
@@ -98,27 +98,27 @@
    ├── entity_embeddings.tsv.zip
    └── relation_type_embeddings.tsv.zip
    ```
-2. 运行示例脚本，会自动解压缩
+2. Run example scripts, they will automatically decompress
 
-### 方法2：使用解压缩后的TSV文件
-1. 手动解压缩模型文件到`data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/`目录
-2. 确保包含以下文件：
+### Method 2: Using Decompressed TSV Files
+1. Manually decompress model files to `data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/` directory
+2. Ensure the following files are included:
    - `annotated_entities.tsv`
    - `knowledge_graph.tsv`
    - `entity_embeddings.tsv`
    - `relation_type_embeddings.tsv`
 
-## 输出文件
+## Output Files
 
-运行完整示例后，会在项目根目录的`results/`文件夹中生成：
-- `annotated_drugs.xlsx`: 完整注释的药物列表
-- `filtered_drugs.xlsx`: 过滤后的药物列表
-- `visualization_report/`: 可视化图表和报告
+After running the complete example, the following files will be generated in the `results/` folder in the project root directory:
+- `annotated_drugs.xlsx`: Complete annotated drug list
+- `filtered_drugs.xlsx`: Filtered drug list
+- `visualization_report/`: Visualization charts and reports
 
-## 注意事项
+## Important Notes
 
-- 所有脚本都会自动从examples目录向上查找项目根目录
-- 数据文件路径会自动调整为相对于项目根目录的路径
-- 输出文件会保存在项目根目录的results文件夹中
-- 支持自动解压缩ZIP格式的模型文件
-- 如果数据文件不存在，脚本会提供清晰的错误信息和使用指导 
+- All scripts automatically search upward from the examples directory to find the project root directory
+- Data file paths are automatically adjusted to be relative to the project root directory
+- Output files are saved in the results folder in the project root directory
+- Supports automatic decompression of ZIP format model files
+- If data files don't exist, scripts provide clear error messages and usage guidance 
