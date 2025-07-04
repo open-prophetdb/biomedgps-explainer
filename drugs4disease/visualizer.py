@@ -16,7 +16,8 @@ class Visualizer:
         plt.rcParams["font.sans-serif"] = ["SimHei", "Arial Unicode MS", "DejaVu Sans"]
         plt.rcParams["axes.unicode_minus"] = False
 
-    def get_chart_types(self):
+    @staticmethod
+    def get_chart_types():
         return [
             "score_distribution",
             "predicted_score_boxplot",
@@ -32,7 +33,8 @@ class Visualizer:
             "existing_vs_predicted",
         ]
 
-    def get_chart_title(self, chart_type):
+    @staticmethod
+    def get_chart_title(chart_type):
         return {
             "score_distribution": "Drug Predicted Score Distribution",
             "predicted_score_boxplot": "Predicted Score Distribution by Knowledge Graph Inclusion",

@@ -20,6 +20,7 @@ setup(
         'openpyxl>=3.0.0',
         'requests>=2.25.0',
         'scikit-learn>=1.0.0',
+        'wandb>=0.15.0',
     ],
     entry_points={
         'console_scripts': [

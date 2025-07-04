@@ -52,6 +52,7 @@ The package will automatically install all required dependencies:
 - `requests>=2.25.0` - HTTP requests
 - `scikit-learn>=1.0.0` - Machine learning utilities
 - `plotly>=5.0.0` - Interactive visualizations
+- `wandb>=0.15.0` - Weights & Biases integration
 
 ## Quick Start
 

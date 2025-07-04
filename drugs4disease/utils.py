@@ -98,20 +98,14 @@ def extract_model_files_if_needed(model_dir: str) -> bool:
     return True
 
 
-def get_default_model_dir(project_root=None):
+def get_default_model_dir():
     """
     Get the default model directory path
     
-    Args:
-        project_root: project root directory, if None, automatically detect
-        
     Returns:
         str: default model directory path
     """
-    if project_root is None:
-        project_root = _find_project_root()
-    
-    return os.path.join(project_root, "data", "biomedgps_v2_20250318_TransE_l2_KMkgBhIV")
+    return os.path.join(os.path.expanduser("~/.biomedgps-explainer/models"), "biomedgps_v2_20250318_TransE_l2_KMkgBhIV")
 
 
 def _find_project_root():
@@ -175,16 +169,15 @@ def get_model_file_paths(
     knowledge_graph: Optional[str] = None,
     entity_embeddings: Optional[str] = None,
     relation_embeddings: Optional[str] = None,
-    project_root: str = None
 ) -> Tuple[str, str, str, str]:
     """
     Smartly get the model file paths
     
-    Logic:
-    1. If the user specifies all four files, use the user-specified paths
-    2. If the user does not specify any file, use the files in the default directory
-    3. If the user specifies some files, throw an error (all four files must be specified together)
-    4. Automatically handle the decompression of ZIP files
+    逻辑：
+    1. 如果用户指定了所有四个文件，使用用户指定的路径
+    2. 如果用户没有指定任何文件，使用默认目录下的文件
+    3. 如果用户指定了部分文件，抛出错误（要求四个文件必须一起使用）
+    4. 自动处理ZIP文件的解压缩
     
     Args:
         entity_file: entity file path
@@ -212,7 +205,7 @@ def get_model_file_paths(
     if specified_count == 0:
         # the user did not specify any file, use the default directory
         print("No model files specified, using the files in the default directory...")
-        model_dir = get_default_model_dir(project_root)
+        model_dir = get_default_model_dir()
         
         # check and decompress the ZIP file
         if not extract_model_files_if_needed(model_dir):
@@ -244,7 +237,7 @@ def get_model_file_paths(
                     else:
                         raise FileNotFoundError(f"Decompression failed: {zip_path}")
                 else:
-                    raise FileNotFoundError(f"File does not exist: {file_path}")
+                    raise FileNotFoundError(f"文件不存在: {file_path}")
             
             file_paths.append(file_path)
         

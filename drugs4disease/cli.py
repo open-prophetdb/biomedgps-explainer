@@ -1,10 +1,12 @@
 import click
+import sys
 import pandas as pd
 import os
 from .core import DrugDiseaseCore
 from .filter import DrugFilter
 from .visualizer import Visualizer
 from .full_pipeline import main as run_full_pipeline
+from .model import Model
 
 @click.group()
 def cli():
@@ -12,19 +14,14 @@ def cli():
     pass
 
 @cli.command()
-@click.option('--disease', required=True, help='disease id, e.g. MONDO:0004979')
-@click.option('--entity-file', help='entity file (optional, use default directory if not specified)')
-@click.option('--knowledge-graph', help='knowledge graph file (optional, use default directory if not specified)')
-@click.option('--entity-embeddings', help='entity embeddings file (optional, use default directory if not specified)')
-@click.option('--relation-embeddings', help='relation embeddings file (optional, use default directory if not specified)')
+@click.option('--disease-id', required=True, help='disease id, e.g. MONDO:0004979')
+@click.option('--model-run-id', required=False, help='model run id, e.g. 6vlvgvfq', default='6vlvgvfq')
 @click.option('--output-dir', required=True, help='output directory')
-@click.option('--model', default='TransE_l2', help='KGE model')
 @click.option('--top-n-diseases', default=100, help='number of similar diseases')
-@click.option('--gamma', default=12.0, help='Gamma parameter')
 @click.option('--threshold', default=0.5, help='drug filtering threshold')
-@click.option('--relation-type', default='DGIDB::OTHER::Gene:Compound', help='relation type')
+@click.option('--relation-type', default='GNBR::T::Compound:Disease', help='A relation type which means the treatment relationship between a compound and a disease.')
 @click.option('--top-n-drugs', default=1000, help='number of drugs to interpret')  # number of drugs to interpret, default 1000, if number of drugs to interpret is specified, then top_n_drugs is required
-def run(disease, entity_file, knowledge_graph, entity_embeddings, relation_embeddings, output_dir, model, top_n_diseases, gamma, threshold, relation_type, top_n_drugs):
+def run(disease_id, model_run_id, output_dir, top_n_diseases, threshold, relation_type, top_n_drugs):
     """
     One-click complete all analysis steps, generate annotated_drugs.xlsx
     
@@ -35,16 +32,27 @@ def run(disease, entity_file, knowledge_graph, entity_embeddings, relation_embed
     """
     os.makedirs(output_dir, exist_ok=True)
     core = DrugDiseaseCore()
-    
+
+    try:
+        model = Model("biomedgps-kge-v1")
+        converted_files = model.download_and_convert(model_run_id)
+        model_config = model.load_model_config(converted_files.get('model_dir'))
+        model_name = model_config.get('model', None)
+        assert model_name is not None, "Model name is not found in model config"
+        gamma = model_config.get('gamma', None)
+        assert gamma is not None, "Gamma is not found in model config"
+    except Exception as e:
+        sys.exit(1)
+
     try:
         core.run_full_pipeline(
-            disease_id=disease,
-            entity_file=entity_file,
-            knowledge_graph=knowledge_graph,
-            entity_embeddings=entity_embeddings,
-            relation_embeddings=relation_embeddings,
+            disease_id=disease_id,
+            entity_file=converted_files['annotated_entities'],
+            knowledge_graph=converted_files['knowledge_graph'],
+            entity_embeddings=converted_files['entity_embeddings'],
+            relation_embeddings=converted_files['relation_embeddings'],
             output_dir=output_dir,
-            model=model,
+            model=model_name,
             top_n_diseases=top_n_diseases,
             gamma=gamma,
             threshold=threshold,
@@ -58,8 +66,8 @@ def run(disease, entity_file, knowledge_graph, entity_embeddings, relation_embed
 
 @cli.command()
 @click.option('--expression', required=True, help='filter expression')
-@click.option('--input', 'input_file', required=True, help='input file annotated_drugs.xlsx')
-@click.option('--output', 'output_file', required=True, help='output file final_drugs.xlsx')
+@click.option('--input-file', 'input_file', required=True, help='input file annotated_drugs.xlsx')
+@click.option('--output-file', 'output_file', required=True, help='output file final_drugs.xlsx')
 def filter(expression, input_file, output_file):
     """filter drugs list based on expression"""
     df = pd.read_excel(input_file)
@@ -69,10 +77,17 @@ def filter(expression, input_file, output_file):
         filtered.to_excel(writer, sheet_name='filtered', index=False)
     click.echo(f'✅ Filter completed! Results saved to {output_file}')
 
+
 @cli.command()
-@click.option('--input', 'input_file', required=True, help='input file annotated_drugs.xlsx')
-@click.option('--output-dir', required=True, help='chart output directory')
-@click.option('--viz-type', default='all', help='visualization type (all, score_distribution, disease_similarity_heatmap, network_centrality, shared_genes_pathways, drug_disease_network, shared_gene_count, score_vs_degree, shared_pathways, key_genes_distribution, existing_vs_predicted)')
+@click.option(
+    "--input-file", "input_file", required=True, help="input file annotated_drugs.xlsx"
+)
+@click.option("--output-dir", required=True, help="chart output directory")
+@click.option(
+    "--viz-type",
+    default="all",
+    help=f'visualization type (all, {", ".join(Visualizer.get_chart_types())})',
+)
 def visualize(input_file, output_dir, viz_type):
     """generate visualization charts and report"""
     os.makedirs(output_dir, exist_ok=True)
@@ -105,12 +120,13 @@ def visualize(input_file, output_dir, viz_type):
             click.echo(f"❌ Generate chart failed: {e}")
 
     click.echo(f"✅ Visualization completed! Output directory: {output_dir}")
-    
+
 @cli.command()
 @click.option('--disease-id', required=True, help='disease id, e.g. MONDO:0004979')
-def run_full_pipeline(disease_id):
+@click.option('--model-run-id', required=False, help='model run id, e.g. 6vlvgvfq', default='6vlvgvfq')
+def pipeline(disease_id, model_run_id):
     """run full pipeline"""
-    run_full_pipeline(disease_id=disease_id)
+    run_full_pipeline(disease_id=disease_id, model_run_id=model_run_id)
 
 if __name__ == '__main__':
     cli() 

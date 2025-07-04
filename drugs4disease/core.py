@@ -825,6 +825,8 @@ class DrugDiseaseCore:
         # sort and deduplicate
         drugs_df.sort_values(by=["score", "num_of_shared_genes_in_path"], ascending=[False, False], inplace=True)
         drugs_df.drop_duplicates(subset=["drug_id"], inplace=True)
+        
+        drugs_df["pvalue"] = drugs_df["pvalue"].apply(lambda x: f"{x:.3g}")
 
         self.logger.info("Save the results...")
         # save the results
@@ -916,7 +918,7 @@ class DrugDiseaseCore:
 
         # ensure all necessary fields exist
         required_fields = [
-            "drug_id", "drug_name", "score", "num_of_shared_genes_in_path", "paths", 
+            "drug_id", "drug_name", "pvalue", "rank", "score", "num_of_shared_genes_in_path", "paths", 
             "existing", "num_of_shared_pathways", "key_genes", "drug_degree",
             "num_of_shared_genes", "shared_gene_names", "num_of_shared_diseases", 
             "shared_disease_names", "num_of_key_genes", "shared_pathways"
@@ -928,7 +930,7 @@ class DrugDiseaseCore:
 
         # rearrange the column order, ensure it is consistent with the final table in run.ipynb
         column_order = [
-            "drug_id", "drug_name", "score", "num_of_shared_genes_in_path", "paths", 
+            "drug_id", "drug_name", "pvalue", "rank", "score", "num_of_shared_genes_in_path", "paths", 
             "existing", "num_of_shared_pathways", "shared_pathways", "key_genes", 
             "num_of_key_genes", "drug_degree", "num_of_shared_genes", 
             "shared_gene_names", "num_of_shared_diseases", "shared_disease_names"
