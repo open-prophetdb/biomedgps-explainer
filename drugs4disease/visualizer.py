@@ -883,7 +883,7 @@ This visualization supports the idea that while shared gene information is relev
                 <div id="{chart_id}"></div>
                 <script>
                     const {chart_id} = {json_data};
-                    Plotly.newPlot('{chart_id}', {chart_id}.data, {chart_id}.layout, {chart_id}.config);
+                    Plotly.newPlot('{chart_id}', {chart_id}.data, {chart_id}.layout, {{responsive: true}});
                 </script>
                 """
         else:
