@@ -465,7 +465,7 @@ A: Use the citation provided in the main README:
   title={BioMedGPS Explainer: A Knowledge Graph-Based Drug Discovery Toolkit},
   author={Yang, Jingcheng},
   year={2024},
-  url={https://github.com/your-repo/biomedgps-explainer}
+  url={https://github.com/open-prophetdb/biomedgps-explainer}
 }
 ```
 
