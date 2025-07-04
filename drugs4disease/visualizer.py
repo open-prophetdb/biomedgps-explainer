@@ -252,6 +252,7 @@ class Visualizer:
             ),
             yaxis=dict(showline=True, linecolor="black"),
             height=600,
+            autosize=True,
         )
 
         fig.write_image(output_path)
@@ -560,6 +561,7 @@ Key observations:
                 x=0.8,  # 横向居中
             ),
             title=None,
+            autosize=True,
         )
         fig.update_traces(marker=dict(size=10))
         fig.update_traces(
@@ -1397,6 +1399,9 @@ This visualization supports the idea that while shared gene information is relev
         for chart_type, chart_info in charts.items():
             chart_title = self.get_chart_title(chart_type)
             chart_id = chart_type.replace("_", "-")
+
+            if chart_type == "prompt":
+                continue
 
             html_content += f"""
             <div class="chart-section" id="{chart_id}">

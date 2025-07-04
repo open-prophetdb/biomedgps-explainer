@@ -10,6 +10,7 @@ body {
     line-height: 1.6;
     color: #333;
     background-color: #ffffff;
+    overflow-x: hidden; /* Prevent horizontal scroll */
 }
 
 .container {
@@ -199,7 +200,7 @@ body {
 
 .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
 }
 
@@ -251,7 +252,7 @@ body {
 .quick-start-content {
     display: grid;
     grid-template-columns: 2fr 1fr;
-    gap: 4rem;
+    gap: 3rem;
     align-items: start;
 }
 
@@ -270,77 +271,81 @@ body {
 .step-number {
     width: 40px;
     height: 40px;
-    background: #2563eb;
-    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: 600;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
     flex-shrink: 0;
 }
 
 .step-content h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     color: #1f2937;
 }
 
 .step-content pre {
-    background: #f3f4f6;
-    padding: 1rem;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin: 0.5rem 0;
+    background: #f8fafc;
     border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 1rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-size: 0.9rem;
+    max-width: 92%;
 }
 
 .step-content code {
     font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-    font-size: 0.9rem;
+    color: #374151;
 }
 
 .step-content p {
     color: #6b7280;
-    margin-top: 0.5rem;
+    line-height: 1.6;
 }
 
 .quick-start-demo {
     background: #f8fafc;
-    padding: 2rem;
     border-radius: 12px;
+    padding: 2rem;
     border: 1px solid #e5e7eb;
+    max-width: 92%;
 }
 
 .quick-start-demo h3 {
     font-size: 1.25rem;
     font-weight: 600;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     color: #1f2937;
 }
 
 .demo-card {
     background: white;
-    padding: 1.5rem;
     border-radius: 8px;
+    padding: 1.5rem;
     border: 1px solid #e5e7eb;
 }
 
 .demo-card h4 {
     font-size: 1.1rem;
     font-weight: 600;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     color: #1f2937;
 }
 
 .demo-card p {
     color: #6b7280;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
 }
 
-/* Documentation Section */
+/* Documentation */
 .documentation {
     padding: 80px 0;
     background: #f8fafc;
@@ -348,7 +353,7 @@ body {
 
 .docs-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
 }
 
@@ -367,15 +372,15 @@ body {
 }
 
 .doc-icon {
-    width: 50px;
-    height: 50px;
+    width: 60px;
+    height: 60px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    border-radius: 10px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     color: white;
 }
 
@@ -388,40 +393,42 @@ body {
 
 .doc-card p {
     color: #6b7280;
-    margin-bottom: 1.5rem;
     line-height: 1.6;
+    margin-bottom: 1.5rem;
 }
 
 .doc-link {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
+    gap: 8px;
     color: #2563eb;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
     transition: gap 0.3s ease;
 }
 
 .doc-link:hover {
-    gap: 10px;
+    gap: 12px;
 }
 
 /* Footer */
 .footer {
     background: #1f2937;
     color: white;
-    padding: 60px 0 20px;
+    padding: 3rem 0 1rem;
 }
 
 .footer-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 3rem;
+    gap: 2rem;
     margin-bottom: 2rem;
 }
 
 .footer-section h3,
 .footer-section h4 {
+    font-size: 1.1rem;
+    font-weight: 600;
     margin-bottom: 1rem;
     color: #f9fafb;
 }
@@ -429,6 +436,7 @@ body {
 .footer-section p {
     color: #d1d5db;
     line-height: 1.6;
+    margin-bottom: 1rem;
 }
 
 .footer-section ul {
@@ -446,14 +454,15 @@ body {
 }
 
 .footer-section ul li a:hover {
-    color: #60a5fa;
+    color: #2563eb;
 }
 
 .footer-bottom {
     border-top: 1px solid #374151;
-    padding-top: 2rem;
+    padding-top: 1rem;
     text-align: center;
     color: #9ca3af;
+    font-size: 0.9rem;
 }
 
 /* Responsive Design */
@@ -473,6 +482,8 @@ body {
         transition: 0.3s;
         box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
         padding: 2rem 0;
+        gap: 1rem;
+        padding-left: 10px;
     }
 
     .nav-menu.active {
@@ -492,8 +503,7 @@ body {
     .hero-buttons {
         justify-content: center;
         flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
+        align-items: center;
     }
 
     .features-grid {
@@ -502,7 +512,6 @@ body {
 
     .quick-start-content {
         grid-template-columns: 1fr;
-        gap: 2rem;
     }
 
     .docs-grid {
@@ -530,19 +539,46 @@ body {
         width: 100%;
         justify-content: center;
     }
+
+    .container {
+        padding: 0 15px;
+    }
+
+    .nav-container {
+        padding: 0 15px;
+    }
+
+    .hero-container {
+        padding: 0 15px;
+    }
+
+    .feature-card,
+    .doc-card {
+        padding: 1.5rem;
+    }
+
+    .step {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .step-number {
+        align-self: center;
+    }
 }
 
-/* Code highlighting */
+/* Code block improvements */
 pre code {
-    color: #374151;
+    white-space: pre-wrap;
+    word-wrap: break-word;
 }
 
-/* Smooth scrolling */
+/* Ensure proper viewport */
 html {
     scroll-behavior: smooth;
 }
 
-/* Loading animation */
+/* Animations */
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -555,9 +591,8 @@ html {
 }
 
 .feature-card,
-.doc-card,
-.step {
-    animation: fadeInUp 0.6s ease forwards;
+.doc-card {
+    animation: fadeInUp 0.6s ease-out;
 }
 
 /* Custom scrollbar */

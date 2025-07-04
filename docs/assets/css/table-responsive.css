@@ -1,0 +1,235 @@
+/* Table Responsive Styles */
+
+/* Base table styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin: 1rem 0;
+}
+
+th, td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+}
+
+th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #1f2937;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+tr:hover {
+    background: #f8fafc;
+}
+
+/* Table wrapper for horizontal scroll */
+.table-responsive {
+    overflow-x: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin: 1rem 0;
+}
+
+.table-responsive table {
+    margin: 0;
+    min-width: 600px; /* Minimum width for readability */
+}
+
+/* Mobile-first responsive table */
+@media (max-width: 768px) {
+    .table-responsive {
+        border-radius: 4px;
+    }
+    
+    .table-responsive table {
+        min-width: 500px;
+        font-size: 0.9rem;
+    }
+    
+    th, td {
+        padding: 0.75rem 0.5rem;
+        white-space: nowrap;
+    }
+    
+    /* Stack table on very small screens */
+    .table-stack {
+        overflow-x: visible;
+    }
+    
+    .table-stack table {
+        min-width: auto;
+        width: 100%;
+    }
+    
+    .table-stack thead {
+        display: none;
+    }
+    
+    .table-stack tbody {
+        display: block;
+    }
+    
+    .table-stack tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    .table-stack td {
+        display: block;
+        text-align: left;
+        padding: 0.75rem;
+        border: none;
+        border-bottom: 1px solid #f3f4f6;
+        white-space: normal;
+        position: relative;
+        padding-left: 50%;
+    }
+    
+    .table-stack td:before {
+        content: attr(data-label);
+        position: absolute;
+        left: 0.75rem;
+        width: 45%;
+        font-weight: 600;
+        color: #374151;
+    }
+    
+    .table-stack td:last-child {
+        border-bottom: none;
+    }
+}
+
+@media (max-width: 480px) {
+    .table-responsive table {
+        min-width: 400px;
+        font-size: 0.8rem;
+    }
+    
+    th, td {
+        padding: 0.5rem 0.25rem;
+    }
+    
+    .table-stack td {
+        padding: 0.5rem;
+        padding-left: 40%;
+    }
+    
+    .table-stack td:before {
+        left: 0.5rem;
+        width: 35%;
+        font-size: 0.75rem;
+    }
+}
+
+/* Compact table variant */
+.table-compact {
+    font-size: 0.9rem;
+}
+
+.table-compact th,
+.table-compact td {
+    padding: 0.5rem;
+}
+
+/* Wide table variant for complex data */
+.table-wide {
+    min-width: 800px;
+}
+
+@media (max-width: 768px) {
+    .table-wide {
+        min-width: 600px;
+    }
+}
+
+/* Table with fixed first column */
+.table-fixed-first {
+    position: relative;
+}
+
+.table-fixed-first th:first-child,
+.table-fixed-first td:first-child {
+    position: sticky;
+    left: 0;
+    background: white;
+    z-index: 5;
+    border-right: 2px solid #e5e7eb;
+}
+
+.table-fixed-first th:first-child {
+    z-index: 15;
+    background: #f8fafc;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+    table {
+        background: #1f2937;
+    }
+    
+    th {
+        background: #374151;
+        color: #f9fafb;
+    }
+    
+    td {
+        color: #d1d5db;
+    }
+    
+    tr:hover {
+        background: #374151;
+    }
+    
+    .table-stack tr {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .table-stack td {
+        border-color: #4b5563;
+    }
+    
+    .table-stack td:before {
+        color: #f9fafb;
+    }
+    
+    .table-fixed-first th:first-child,
+    .table-fixed-first td:first-child {
+        background: #1f2937;
+        border-color: #4b5563;
+    }
+    
+    .table-fixed-first th:first-child {
+        background: #374151;
+    }
+}
+
+/* Print styles */
+@media print {
+    .table-responsive {
+        overflow-x: visible;
+        box-shadow: none;
+    }
+    
+    table {
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+    
+    th, td {
+        border: 1px solid #ccc;
+    }
+} 
