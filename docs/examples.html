@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
     <!-- Navigation -->
     <nav class="navbar">
@@ -24,8 +26,8 @@
                 <li><a href="examples.html" class="nav-link active">Examples</a></li>
                 <li><a href="model-usage.html" class="nav-link">Model Usage</a></li>
                 <li><a href="https://github.com/your-repo/biomedgps-explainer" class="nav-link" target="_blank">
-                    <i class="fab fa-github"></i> GitHub
-                </a></li>
+                        <i class="fab fa-github"></i> GitHub
+                    </a></li>
             </ul>
             <div class="hamburger">
                 <span class="bar"></span>
@@ -66,37 +68,39 @@
                     <section id="live-demos">
                         <h2>Live Demos</h2>
                         <p>Explore interactive examples of BioMedGPS Explainer in action.</p>
-                        
+
                         <div class="demo-grid">
                             <div class="demo-card">
                                 <div class="demo-header">
                                     <i class="fas fa-lungs"></i>
                                     <h3>Asthma Drug Discovery</h3>
                                 </div>
-                                <p>Complete drug repurposing analysis for asthma (MONDO:0004979) with comprehensive visualizations and network analysis.</p>
+                                <p>Complete drug repurposing analysis for asthma (MONDO:0004979) with comprehensive
+                                    visualizations and network analysis.</p>
                                 <div class="demo-features">
                                     <span class="feature-tag">Drug Prediction</span>
                                     <span class="feature-tag">Network Analysis</span>
                                     <span class="feature-tag">Pathway Enrichment</span>
                                 </div>
-                                <a href="examples/asthma-analysis.html" class="btn btn-primary">
+                                <a href="reports/asthma_analysis_report.html" target="_blank" class="btn btn-primary">
                                     <i class="fas fa-external-link-alt"></i>
-                                    View Full Report
+                                    View Original Report
                                 </a>
                             </div>
 
                             <div class="demo-card">
                                 <div class="demo-header">
                                     <i class="fas fa-heart"></i>
-                                    <h3>Cardiovascular Disease</h3>
+                                    <h3>Asthma Disease</h3>
                                 </div>
-                                <p>Drug discovery analysis for cardiovascular diseases with focus on network centrality and gene pathway analysis.</p>
+                                <p>Drug discovery analysis for asthma diseases with focus on network centrality and gene
+                                    pathway analysis.</p>
                                 <div class="demo-features">
                                     <span class="feature-tag">Network Centrality</span>
                                     <span class="feature-tag">Gene Analysis</span>
                                     <span class="feature-tag">Interactive Plots</span>
                                 </div>
-                                <a href="examples/cardiovascular-analysis.html" class="btn btn-primary">
+                                <a href="examples/asthma-analysis.html" class="btn btn-primary">
                                     <i class="fas fa-external-link-alt"></i>
                                     View Report
                                 </a>
@@ -107,7 +111,8 @@
                                     <i class="fas fa-brain"></i>
                                     <h3>Neurological Disorders</h3>
                                 </div>
-                                <p>Analysis of potential drug candidates for neurological disorders using advanced filtering and visualization techniques.</p>
+                                <p>Analysis of potential drug candidates for neurological disorders using advanced
+                                    filtering and visualization techniques.</p>
                                 <div class="demo-features">
                                     <span class="feature-tag">Advanced Filtering</span>
                                     <span class="feature-tag">Visualization</span>
@@ -118,13 +123,31 @@
                                     View Report
                                 </a>
                             </div>
+
+                            <div class="demo-card">
+                                <div class="demo-header">
+                                    <i class="fas fa-tint"></i>
+                                    <h3>Diabetes Drug Discovery</h3>
+                                </div>
+                                <p>Comprehensive drug repurposing analysis for diabetes (MONDO:0005148) with metabolic
+                                    pathway analysis and network visualization.</p>
+                                <div class="demo-features">
+                                    <span class="feature-tag">Metabolic Analysis</span>
+                                    <span class="feature-tag">Pathway Enrichment</span>
+                                    <span class="feature-tag">Interactive Reports</span>
+                                </div>
+                                <a href="examples/diabetes-analysis.html" class="btn btn-primary">
+                                    <i class="fas fa-external-link-alt"></i>
+                                    View Full Report
+                                </a>
+                            </div>
                         </div>
                     </section>
 
                     <section id="code-examples">
                         <h2>Code Examples</h2>
                         <p>Practical code examples showing how to use BioMedGPS Explainer for different scenarios.</p>
-                        
+
                         <div class="example-box">
                             <h3>Basic Drug Discovery Pipeline</h3>
                             <pre><code>from drugs4disease.core import DrugDiseaseCore
@@ -221,14 +244,15 @@ visualizer.create_visualization(
                     <section id="use-cases">
                         <h2>Use Cases</h2>
                         <p>Common use cases and applications of BioMedGPS Explainer in biomedical research.</p>
-                        
+
                         <div class="use-case-grid">
                             <div class="use-case-card">
                                 <div class="use-case-icon">
                                     <i class="fas fa-search"></i>
                                 </div>
                                 <h3>Drug Repurposing</h3>
-                                <p>Identify existing drugs that could be repurposed for new therapeutic indications using knowledge graph embeddings and network analysis.</p>
+                                <p>Identify existing drugs that could be repurposed for new therapeutic indications
+                                    using knowledge graph embeddings and network analysis.</p>
                                 <ul>
                                     <li>Predict drug-disease associations</li>
                                     <li>Analyze shared biological pathways</li>
@@ -241,7 +265,8 @@ visualizer.create_visualization(
                                     <i class="fas fa-project-diagram"></i>
                                 </div>
                                 <h3>Network Medicine</h3>
-                                <p>Analyze complex biological networks to understand disease mechanisms and identify therapeutic targets.</p>
+                                <p>Analyze complex biological networks to understand disease mechanisms and identify
+                                    therapeutic targets.</p>
                                 <ul>
                                     <li>PPI network analysis</li>
                                     <li>Pathway enrichment analysis</li>
@@ -254,7 +279,8 @@ visualizer.create_visualization(
                                     <i class="fas fa-chart-line"></i>
                                 </div>
                                 <h3>Biomarker Discovery</h3>
-                                <p>Identify potential biomarkers by analyzing shared genes and pathways between drugs and diseases.</p>
+                                <p>Identify potential biomarkers by analyzing shared genes and pathways between drugs
+                                    and diseases.</p>
                                 <ul>
                                     <li>Gene expression analysis</li>
                                     <li>Pathway overlap analysis</li>
@@ -267,7 +293,8 @@ visualizer.create_visualization(
                                     <i class="fas fa-flask"></i>
                                 </div>
                                 <h3>Precision Medicine</h3>
-                                <p>Develop personalized treatment strategies by analyzing individual disease profiles and drug responses.</p>
+                                <p>Develop personalized treatment strategies by analyzing individual disease profiles
+                                    and drug responses.</p>
                                 <ul>
                                     <li>Patient-specific analysis</li>
                                     <li>Drug response prediction</li>
@@ -279,19 +306,22 @@ visualizer.create_visualization(
 
                     <section id="sample-reports">
                         <h2>Sample Reports</h2>
-                        <p>Comprehensive analysis reports demonstrating the full capabilities of BioMedGPS Explainer.</p>
-                        
+                        <p>Comprehensive analysis reports demonstrating the full capabilities of BioMedGPS Explainer.
+                        </p>
+
                         <div class="report-grid">
                             <div class="report-card">
                                 <div class="report-preview">
-                                    <img src="assets/images/asthma-report-preview.png" alt="Asthma Analysis Report Preview" onerror="this.style.display='none'">
+                                    <img src="assets/images/asthma-report-preview.png"
+                                        alt="Asthma Analysis Report Preview" onerror="this.style.display='none'">
                                     <div class="report-overlay">
                                         <i class="fas fa-chart-bar"></i>
                                     </div>
                                 </div>
                                 <div class="report-content">
                                     <h3>Asthma Drug Discovery Analysis</h3>
-                                    <p>Complete analysis of potential drug candidates for asthma treatment, including network analysis, pathway enrichment, and interactive visualizations.</p>
+                                    <p>Complete analysis of potential drug candidates for asthma treatment, including
+                                        network analysis, pathway enrichment, and interactive visualizations.</p>
                                     <div class="report-stats">
                                         <span><i class="fas fa-pills"></i> 150 Drugs Analyzed</span>
                                         <span><i class="fas fa-dna"></i> 25 Genes Identified</span>
@@ -306,14 +336,17 @@ visualizer.create_visualization(
 
                             <div class="report-card">
                                 <div class="report-preview">
-                                    <img src="assets/images/cardiovascular-report-preview.png" alt="Cardiovascular Analysis Report Preview" onerror="this.style.display='none'">
+                                    <img src="assets/images/cardiovascular-report-preview.png"
+                                        alt="Cardiovascular Analysis Report Preview"
+                                        onerror="this.style.display='none'">
                                     <div class="report-overlay">
                                         <i class="fas fa-heartbeat"></i>
                                     </div>
                                 </div>
                                 <div class="report-content">
                                     <h3>Cardiovascular Disease Analysis</h3>
-                                    <p>Network-based analysis of cardiovascular disease drug candidates with focus on heart-related pathways and gene interactions.</p>
+                                    <p>Network-based analysis of cardiovascular disease drug candidates with focus on
+                                        heart-related pathways and gene interactions.</p>
                                     <div class="report-stats">
                                         <span><i class="fas fa-pills"></i> 200 Drugs Analyzed</span>
                                         <span><i class="fas fa-dna"></i> 35 Genes Identified</span>
@@ -325,13 +358,37 @@ visualizer.create_visualization(
                                     </a>
                                 </div>
                             </div>
+
+                            <div class="report-card">
+                                <div class="report-preview">
+                                    <img src="assets/images/diabetes-report-preview.png"
+                                        alt="Diabetes Analysis Report Preview" onerror="this.style.display='none'">
+                                    <div class="report-overlay">
+                                        <i class="fas fa-tint"></i>
+                                    </div>
+                                </div>
+                                <div class="report-content">
+                                    <h3>Diabetes Drug Discovery Analysis</h3>
+                                    <p>Comprehensive analysis of potential drug candidates for diabetes treatment with
+                                        focus on metabolic pathways and glucose regulation.</p>
+                                    <div class="report-stats">
+                                        <span><i class="fas fa-pills"></i> 180 Drugs Analyzed</span>
+                                        <span><i class="fas fa-dna"></i> 28 Genes Identified</span>
+                                        <span><i class="fas fa-route"></i> 15 Pathways Enriched</span>
+                                    </div>
+                                    <a href="examples/diabetes-analysis.html" class="btn btn-secondary">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        View Report
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </section>
 
                     <section id="tutorials">
                         <h2>Tutorials</h2>
                         <p>Step-by-step tutorials to help you get started with BioMedGPS Explainer.</p>
-                        
+
                         <div class="tutorial-list">
                             <div class="tutorial-item">
                                 <div class="tutorial-number">01</div>
@@ -342,7 +399,8 @@ visualizer.create_visualization(
                                         <span><i class="fas fa-clock"></i> 15 minutes</span>
                                         <span><i class="fas fa-level-up-alt"></i> Beginner</span>
                                     </div>
-                                    <a href="tutorials/getting-started.html" class="tutorial-link">Start Tutorial <i class="fas fa-arrow-right"></i></a>
+                                    <a href="tutorials/getting-started.html" class="tutorial-link">Start Tutorial <i
+                                            class="fas fa-arrow-right"></i></a>
                                 </div>
                             </div>
 
@@ -350,12 +408,14 @@ visualizer.create_visualization(
                                 <div class="tutorial-number">02</div>
                                 <div class="tutorial-content">
                                     <h3>Advanced Filtering Techniques</h3>
-                                    <p>Master advanced filtering techniques to identify the most promising drug candidates.</p>
+                                    <p>Master advanced filtering techniques to identify the most promising drug
+                                        candidates.</p>
                                     <div class="tutorial-meta">
                                         <span><i class="fas fa-clock"></i> 20 minutes</span>
                                         <span><i class="fas fa-level-up-alt"></i> Intermediate</span>
                                     </div>
-                                    <a href="tutorials/advanced-filtering.html" class="tutorial-link">Start Tutorial <i class="fas fa-arrow-right"></i></a>
+                                    <a href="tutorials/advanced-filtering.html" class="tutorial-link">Start Tutorial <i
+                                            class="fas fa-arrow-right"></i></a>
                                 </div>
                             </div>
 
@@ -363,12 +423,14 @@ visualizer.create_visualization(
                                 <div class="tutorial-number">03</div>
                                 <div class="tutorial-content">
                                     <h3>Custom Visualization Reports</h3>
-                                    <p>Create custom visualization reports and interactive dashboards for your analysis results.</p>
+                                    <p>Create custom visualization reports and interactive dashboards for your analysis
+                                        results.</p>
                                     <div class="tutorial-meta">
                                         <span><i class="fas fa-clock"></i> 25 minutes</span>
                                         <span><i class="fas fa-level-up-alt"></i> Advanced</span>
                                     </div>
-                                    <a href="tutorials/custom-visualization.html" class="tutorial-link">Start Tutorial <i class="fas fa-arrow-right"></i></a>
+                                    <a href="tutorials/custom-visualization.html" class="tutorial-link">Start Tutorial
+                                        <i class="fas fa-arrow-right"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -412,4 +474,5 @@ visualizer.create_visualization(
 
     <script src="assets/js/script.js"></script>
 </body>
-</html> 
+
+</html>
