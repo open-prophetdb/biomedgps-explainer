@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='drugs4disease',
+    name='biomedgps-explainer',
     version='0.1.0',
     description='A tool for using NM-based model to predict drugs for a given disease',
     author='Jingcheng Yang',
@@ -24,7 +24,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'drugs4disease=drugs4disease.cli:cli',
+            'biomedgps-explainer=drugs4disease.cli:cli',
+            'bexplainer=drugs4disease.cli:cli',
         ],
     },
     python_requires='>=3.8',

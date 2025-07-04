@@ -17,6 +17,10 @@ BioMedGPS Explainer is a powerful Python toolkit designed for drug repurposing a
 - **📈 Data Validation**: Built-in data validation and automatic ZIP file decompression
 - **🎯 Explainability**: AI-powered drug explanation generation for research insights
 
+## Demo
+
+[Drug Repurposing Analysis Report for Asthma](docs/reports/asthma_analysis_report.html)
+
 ## Installation
 
 ### Prerequisites

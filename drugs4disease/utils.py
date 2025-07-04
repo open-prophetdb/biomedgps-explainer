@@ -7,7 +7,7 @@ import os
 import zipfile
 import glob
 from typing import List, Tuple, Optional
-
+import logging
 
 def extract_zip_if_needed(zip_path: str, extract_dir: str) -> bool:
     """
@@ -279,12 +279,54 @@ def validate_model_files(
         (entity_embeddings, "entity embeddings file"),
         (relation_embeddings, "relation embeddings file")
     ]
-    
+
     for file_path, description in files_to_check:
         if not os.path.exists(file_path):
             print(f"✗ {description} does not exist: {file_path}")
             return False
         else:
             print(f"✓ {description}: {file_path}")
-    
+
     return True 
+
+
+def init_logger(
+    log_level: int = logging.INFO,
+    log_file: Optional[str] = None,
+    logger_name: Optional[str] = None,
+) -> logging.Logger:
+    """
+    Initialize and return a logger.
+
+    Args:
+        log_level: Logging level (default: INFO)
+        log_file: If provided, logs will also be written to this file
+        logger_name: If provided, returns a named logger; otherwise, root logger
+
+    Returns:
+        Configured logger
+    """
+    logger = logging.getLogger(logger_name)
+    logger.setLevel(log_level)
+
+    # 如果已有 handler，先清掉，避免重复添加
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+    # 控制台 handler
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    logger.addHandler(stream_handler)
+
+    # 文件 handler
+    if log_file is not None:
+        file_handler = logging.FileHandler(log_file)
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+
+    return logger

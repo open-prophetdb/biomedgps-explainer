@@ -1,2 +1,3 @@
 include data/README.md
+recursive-include drugs4disease *
 recursive-include tests * 

@@ -22,7 +22,16 @@ from drugs4disease.explain import DrugExplain
 from drugs4disease.model import Model
 
 
-def main(disease_id: str, model_run_id: str = "6vlvgvfq"):
+def main(
+    disease_id: str,
+    model_run_id: str = "6vlvgvfq",
+    output_dir: str | None = None,
+    filter_expression: str | None = None,
+    top_n_diseases: int = 50,
+    threshold: float = 0.5,
+    relation_type: str = "GNBR::T::Compound:Disease",
+    top_n_drugs: int = 100,
+):
     """
     Main function: demonstrate the complete drug discovery workflow
     """
@@ -30,18 +39,14 @@ def main(disease_id: str, model_run_id: str = "6vlvgvfq"):
     # initialize the core components
     core = DrugDiseaseCore()
     drug_filter = DrugFilter()
-    visualizer = Visualizer()
 
-    try:
-        model = Model("biomedgps-kge-v1")
-        converted_files = model.download_and_convert(model_run_id)
-        model_config = model.load_model_config(converted_files.get("model_dir"))
-        model_name = model_config.get("model", None)
-        assert model_name is not None, "Model name is not found in model config"
-        gamma = model_config.get("gamma", None)
-        assert gamma is not None, "Gamma is not found in model config"
-    except Exception as e:
-        sys.exit(1)
+    model = Model("biomedgps-kge-v1")
+    converted_files = model.download_and_convert(model_run_id)
+    model_config = model.load_model_config(converted_files.get("model_dir"))
+    model_name = model_config.get("model_name", None)
+    assert model_name is not None, "Model name is not found in model config"
+    gamma = model_config.get("gamma", None)
+    assert gamma is not None, "Gamma is not found in model config"
 
     # # smart get model file paths (support ZIP automatic decompression)
     # try:
@@ -62,7 +67,8 @@ def main(disease_id: str, model_run_id: str = "6vlvgvfq"):
         sys.exit(1)
 
     # set output directory - create results in the project root directory
-    output_dir = os.path.join(project_root, "results")
+    if output_dir is None:
+        output_dir = os.path.join(project_root, "results")
     os.makedirs(output_dir, exist_ok=True)
 
     print("=" * 60)
@@ -80,11 +86,11 @@ def main(disease_id: str, model_run_id: str = "6vlvgvfq"):
             relation_embeddings=converted_files["relation_embeddings"],
             output_dir=output_dir,
             model=model_name,
-            top_n_diseases=50,
+            top_n_diseases=top_n_diseases,
             gamma=gamma,
-            threshold=0.5,
-            relation_type="GNBR::T::Compound:Disease",
-            top_n_drugs=100,
+            threshold=threshold,
+            relation_type=relation_type,
+            top_n_drugs=top_n_drugs,
         )
 
         annotated_file = os.path.join(output_dir, "annotated_drugs.xlsx")
@@ -97,7 +103,8 @@ def main(disease_id: str, model_run_id: str = "6vlvgvfq"):
         # step 2: apply complex filter expression
         print("\n2. Apply filter conditions...")
         # example filter expression: select drugs with score > 0.6 and num_of_shared_diseases > 2
-        filter_expression = "pvalue < 0.05 and num_of_shared_genes_in_path >= 1 and existing == False and num_of_key_genes >= 1 and num_of_shared_pathways >= 1"
+        if filter_expression is None:
+            filter_expression = "pvalue < 0.05 and num_of_shared_genes_in_path >= 1 and existing == False and num_of_key_genes >= 1 and num_of_shared_pathways >= 1"
 
         filtered_file = os.path.join(output_dir, "filtered_drugs.xlsx")
         drug_filter.filter_drugs(
@@ -120,33 +127,19 @@ def main(disease_id: str, model_run_id: str = "6vlvgvfq"):
 
         # generate comprehensive report
         report_file = os.path.join(report_dir, "analysis_report.html")
-        disease_name = core.get_disease_name(disease_id, converted_files["annotated_entities"])
+        disease_name = core.get_disease_name(
+            disease_id, converted_files["annotated_entities"]
+        )
         try:
+            visualizer = Visualizer(disease_id=disease_id, disease_name=disease_name)
             visualizer.generate_report(
                 data_file=filtered_file,
                 output_file=report_file,
-                title=f"Drug Discovery Analysis Report - {disease_name}",
+                title=f"Drug Repurposing Analysis Report - {disease_name}",
             )
             print(f"✅ Generate comprehensive report: {report_file}")
         except Exception as e:
             print(f"❌ Generate report failed: {e}")
-
-        # step 4: explain the drugs
-        print("\n4. Explain the drugs...")
-        drugs = pd.read_excel(filtered_file, sheet_name="filtered_drugs")
-        drug_names = (
-            drugs["drug_name"].tolist()[:50]
-            if len(drugs) > 50
-            else drugs["drug_name"].tolist()
-        )
-        disease_name = core.get_disease_name(disease_id, converted_files["annotated_entities"])
-        explainer = DrugExplain()
-        prompt = explainer.generate_prompt(
-            drug_names=drug_names, disease_name=disease_name
-        )
-        print("You can use the following prompt to explain the drugs:")
-        print("=" * 60)
-        print(prompt)
 
         print("\n" + "=" * 60)
         print("Analysis completed!")
@@ -165,4 +158,4 @@ def main(disease_id: str, model_run_id: str = "6vlvgvfq"):
 
 
 if __name__ == "__main__":
-    main(disease_id="MONDO:0004979")
+    main(disease_id="MONDO:0004979", output_dir="results")

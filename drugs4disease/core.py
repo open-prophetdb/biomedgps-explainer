@@ -86,7 +86,8 @@ class DrugDiseaseCore:
             )
         self.logger.info(f'Generated {annotated_xlsx}')
 
-    def get_disease_name(self, disease_id: str, entity_file: str) -> str:
+    @staticmethod
+    def get_disease_name(disease_id: str, entity_file: str) -> str:
         """
         Get the disease name.
         """
@@ -94,7 +95,8 @@ class DrugDiseaseCore:
         disease_name = entity_df[entity_df["id"] == disease_id]["name"].to_numpy()[0]
         return disease_name
 
-    def get_drug_names(self, drug_ids: list[str], entity_file: str) -> list[str]:
+    @staticmethod
+    def get_drug_names(drug_ids: list[str], entity_file: str) -> list[str]:
         """
         Get the drug names.
         """

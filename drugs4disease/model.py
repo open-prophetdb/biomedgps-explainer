@@ -450,7 +450,7 @@ class Model:
 
         except Exception as e:
             logger.error(f"❌ Failed to download and convert model {run_id}: {e}")
-            raise
+            return None
 
 
 # 使用示例
