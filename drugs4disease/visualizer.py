@@ -303,7 +303,7 @@ We observe that:
         def classify_group(row):
             drug_id = str(row["drug_id"])
             if row["existing"]:
-                return f"Existing drugs in Influenza ({num_existing_drugs})"
+                return f"Existing drugs in the disease ({num_existing_drugs})"
             elif drug_id in new_candidate_ids:
                 return f"Predicted new candidates ({num_new_candidates})"
             else:
@@ -518,7 +518,7 @@ Key observations:
         def classify_group(row):
             drug_id = str(row["drug_id"])
             if row["existing"]:
-                return f"Existing drugs in Influenza ({num_existing_drugs})"
+                return f"Existing drugs in the disease ({num_existing_drugs})"
             elif drug_id in new_candidate_ids:
                 return f"Predicted new candidates ({num_new_candidates})"
             else:
@@ -536,7 +536,7 @@ Key observations:
             color="group",
             color_discrete_map={
                 f"All other drugs ({num_others})": "lightgrey",
-                f"Existing drugs in Influenza ({num_existing_drugs})": "blue",
+                f"Existing drugs in the disease ({num_existing_drugs})": "blue",
                 f"Predicted new candidates ({num_new_candidates})": "red",
             },
             title="Shared Gene Count vs Predicted Score",
