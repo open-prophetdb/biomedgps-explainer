@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioMedGPS Explainer - Drug Discovery Toolkit</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-dna"></i>
+                <span>BioMedGPS Explainer</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#features" class="nav-link">Features</a></li>
+                <li><a href="#quick-start" class="nav-link">Quick Start</a></li>
+                <li><a href="user-guide.html" class="nav-link">User Guide</a></li>
+                <li><a href="api.html" class="nav-link">API</a></li>
+                <li><a href="examples.html" class="nav-link">Examples</a></li>
+                <li><a href="https://github.com/your-repo/biomedgps-explainer" class="nav-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    BioMedGPS Explainer
+                </h1>
+                <p class="hero-subtitle">
+                    A comprehensive network medicine-based drug repurposing and visualization toolkit for biomedical research
+                </p>
+                <div class="hero-buttons">
+                    <a href="#quick-start" class="btn btn-primary">
+                        <i class="fas fa-rocket"></i>
+                        Get Started
+                    </a>
+                    <a href="examples.html" class="btn btn-secondary">
+                        <i class="fas fa-chart-line"></i>
+                        View Examples
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-visual">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Key Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-flask"></i>
+                    </div>
+                    <h3>Drug Prediction</h3>
+                    <p>Predict potential drugs using Knowledge Graph Embedding (KGE) models with advanced algorithms</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3>Network Analysis</h3>
+                    <p>Comprehensive drug-disease-gene pathway analysis with centrality calculations and PPI network analysis</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3>Pathway Enrichment</h3>
+                    <p>Advanced pathway overlap analysis between drugs and diseases for deeper insights</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-dna"></i>
+                    </div>
+                    <h3>Shared Annotations</h3>
+                    <p>Statistical analysis of shared genes and diseases between drugs and diseases</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-filter"></i>
+                    </div>
+                    <h3>Smart Filtering</h3>
+                    <p>Advanced drug filtering with support for complex logical expressions</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Visualization</h3>
+                    <p>Automatic chart generation with interactive plots and comprehensive HTML reports</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Start Section -->
+    <section id="quick-start" class="quick-start">
+        <div class="container">
+            <h2 class="section-title">Quick Start</h2>
+            <div class="quick-start-content">
+                <div class="quick-start-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h3>Installation</h3>
+                            <pre><code>git clone &lt;repository-url&gt;
+cd biomedgps-explainer
+pip install -e .</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h3>Prepare Data</h3>
+                            <pre><code>mkdir -p data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
+# Add your model files (ZIP or TSV format)</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h3>Run Analysis</h3>
+                            <pre><code>python3 examples/run_full_example.py
+# Or use CLI
+drugs4disease run --disease MONDO:0004979 --output-dir results/</code></pre>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h3>View Results</h3>
+                            <p>Check the <code>results/</code> directory for comprehensive analysis reports and visualizations</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-start-demo">
+                    <h3>Live Demo</h3>
+                    <div class="demo-card">
+                        <h4>Asthma Drug Discovery Analysis</h4>
+                        <p>Complete analysis report with interactive visualizations</p>
+                        <a href="examples/asthma-analysis.html" class="btn btn-primary">
+                            <i class="fas fa-external-link-alt"></i>
+                            View Report
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Documentation Links -->
+    <section class="documentation">
+        <div class="container">
+            <h2 class="section-title">Documentation</h2>
+            <div class="docs-grid">
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-book"></i>
+                    </div>
+                    <h3>User Guide</h3>
+                    <p>Complete step-by-step guide for using BioMedGPS Explainer</p>
+                    <a href="user-guide.html" class="doc-link">Read Guide <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>API Reference</h3>
+                    <p>Comprehensive API documentation with examples</p>
+                    <a href="api.html" class="doc-link">View API <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                    <h3>Examples</h3>
+                    <p>Real-world examples and use cases</p>
+                    <a href="examples.html" class="doc-link">View Examples <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="doc-card">
+                    <div class="doc-icon">
+                        <i class="fas fa-cog"></i>
+                    </div>
+                    <h3>Model Usage</h3>
+                    <p>Detailed guide for working with KGE models</p>
+                    <a href="model-usage.html" class="doc-link">Learn More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BioMedGPS Explainer</h3>
+                    <p>A powerful toolkit for drug discovery and network medicine analysis</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="user-guide.html">User Guide</a></li>
+                        <li><a href="api.html">API Documentation</a></li>
+                        <li><a href="examples.html">Examples</a></li>
+                        <li><a href="https://github.com/your-repo/biomedgps-explainer">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="model-usage.html">Model Usage</a></li>
+                        <li><a href="data-preparation.html">Data Preparation</a></li>
+                        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BioMedGPS Explainer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html> 

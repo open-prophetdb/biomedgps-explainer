@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Documentation - BioMedGPS Explainer</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/docs.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-dna"></i>
+                <span>BioMedGPS Explainer</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="user-guide.html" class="nav-link">User Guide</a></li>
+                <li><a href="api.html" class="nav-link active">API</a></li>
+                <li><a href="examples.html" class="nav-link">Examples</a></li>
+                <li><a href="model-usage.html" class="nav-link">Model Usage</a></li>
+                <li><a href="https://github.com/your-repo/biomedgps-explainer" class="nav-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>API Documentation</h1>
+            <p>Comprehensive API reference for BioMedGPS Explainer toolkit</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Table of Contents -->
+                <aside class="sidebar">
+                    <nav class="toc">
+                        <h3>API Reference</h3>
+                        <ul>
+                            <li><a href="#overview">Overview</a></li>
+                            <li><a href="#core-classes">Core Classes</a></li>
+                            <li><a href="#drugdiseasecore">DrugDiseaseCore</a></li>
+                            <li><a href="#drugfilter">DrugFilter</a></li>
+                            <li><a href="#visualizer">Visualizer</a></li>
+                            <li><a href="#command-line">Command Line</a></li>
+                            <li><a href="#data-structures">Data Structures</a></li>
+                            <li><a href="#error-handling">Error Handling</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <!-- Content -->
+                <article class="content">
+                    <section id="overview">
+                        <h2>Overview</h2>
+                        <p>This document provides comprehensive API documentation for the BioMedGPS Explainer toolkit, covering all major classes, methods, and their usage.</p>
+                    </section>
+
+                    <section id="core-classes">
+                        <h2>Core Classes</h2>
+                        
+                        <h3>DrugDiseaseCore</h3>
+                        <p>The main class responsible for drug discovery analysis using knowledge graph embeddings.</p>
+                        
+                        <div class="code-example">
+                            <h4>Constructor</h4>
+                            <pre><code>DrugDiseaseCore()</code></pre>
+                        </div>
+                    </section>
+
+                    <section id="drugdiseasecore">
+                        <h2>DrugDiseaseCore Methods</h2>
+                        
+                        <div class="method-box">
+                            <h3>run_full_pipeline()</h3>
+                            <pre><code>run_full_pipeline(
+    disease_id: str,
+    entity_file: Optional[str] = None,
+    knowledge_graph: Optional[str] = None,
+    entity_embeddings: Optional[str] = None,
+    relation_embeddings: Optional[str] = None,
+    output_dir: Optional[str] = None,
+    model: str = 'TransE_l2',
+    top_n_diseases: int = 100,
+    gamma: float = 12.0,
+    threshold: float = 0.5,
+    relation_type: str = 'GNBR::T::Compound:Disease',
+    top_n_drugs: int = 1000
+) -> None</code></pre>
+                            
+                            <p><strong>Description:</strong> One-click complete analysis pipeline that generates annotated_drugs.xlsx with all analysis results.</p>
+                            
+                            <h4>Parameters:</h4>
+                            <ul>
+                                <li><code>disease_id</code>: Disease identifier (e.g., "MONDO:0004979")</li>
+                                <li><code>entity_file</code>: Path to entity annotations file (optional, uses default if not specified)</li>
+                                <li><code>knowledge_graph</code>: Path to knowledge graph file (optional, uses default if not specified)</li>
+                                <li><code>entity_embeddings</code>: Path to entity embeddings file (optional, uses default if not specified)</li>
+                                <li><code>relation_embeddings</code>: Path to relation embeddings file (optional, uses default if not specified)</li>
+                                <li><code>output_dir</code>: Output directory for results</li>
+                                <li><code>model</code>: KGE model type (default: 'TransE_l2')</li>
+                                <li><code>top_n_diseases</code>: Number of similar diseases to consider (default: 100)</li>
+                                <li><code>gamma</code>: Margin parameter for KGE training (default: 12.0)</li>
+                                <li><code>threshold</code>: Drug filtering threshold (default: 0.5)</li>
+                                <li><code>relation_type</code>: Relation type for drug-disease associations (default: 'GNBR::T::Compound:Disease')</li>
+                                <li><code>top_n_drugs</code>: Number of drugs to analyze (default: 1000)</li>
+                            </ul>
+                            
+                            <h4>Returns:</h4>
+                            <p>None</p>
+                            
+                            <h4>Example:</h4>
+                            <pre><code>core = DrugDiseaseCore()
+core.run_full_pipeline(
+    disease_id="MONDO:0004979",
+    output_dir="results/",
+    model='TransE_l2',
+    top_n_diseases=50,
+    gamma=12.0,
+    threshold=0.5,
+    top_n_drugs=100
+)</code></pre>
+                        </div>
+
+                        <div class="method-box">
+                            <h3>predict_drugs()</h3>
+                            <pre><code>predict_drugs(
+    disease_id: str,
+    entity_file: str,
+    knowledge_graph: str,
+    entity_embeddings: str,
+    relation_embeddings: str,
+    model: str,
+    top_n_diseases: int,
+    gamma: float,
+    threshold: float,
+    relation_type: str,
+    output_file: str
+) -> None</code></pre>
+                            
+                            <p><strong>Description:</strong> Generate potential drug list using KGE models.</p>
+                            
+                            <h4>Parameters:</h4>
+                            <ul>
+                                <li><code>disease_id</code>: Target disease identifier</li>
+                                <li><code>entity_file</code>: Path to entity annotations file</li>
+                                <li><code>knowledge_graph</code>: Path to knowledge graph file</li>
+                                <li><code>entity_embeddings</code>: Path to entity embeddings file</li>
+                                <li><code>relation_embeddings</code>: Path to relation embeddings file</li>
+                                <li><code>model</code>: KGE model type</li>
+                                <li><code>top_n_diseases</code>: Number of similar diseases</li>
+                                <li><code>gamma</code>: Margin parameter</li>
+                                <li><code>threshold</code>: Prediction threshold</li>
+                                <li><code>relation_type</code>: Relation type for drug-disease associations</li>
+                                <li><code>output_file</code>: Output Excel file path</li>
+                            </ul>
+                        </div>
+
+                        <div class="method-box">
+                            <h3>get_disease_name()</h3>
+                            <pre><code>get_disease_name(disease_id: str, entity_file: str) -> str</code></pre>
+                            
+                            <p><strong>Description:</strong> Get disease name from disease ID.</p>
+                            
+                            <h4>Parameters:</h4>
+                            <ul>
+                                <li><code>disease_id</code>: Disease identifier</li>
+                                <li><code>entity_file</code>: Path to entity annotations file</li>
+                            </ul>
+                            
+                            <h4>Returns:</h4>
+                            <p>Disease name as string</p>
+                        </div>
+
+                        <div class="method-box">
+                            <h3>get_drug_names()</h3>
+                            <pre><code>get_drug_names(drug_ids: List[str], entity_file: str) -> List[str]</code></pre>
+                            
+                            <p><strong>Description:</strong> Get drug names from drug IDs.</p>
+                            
+                            <h4>Parameters:</h4>
+                            <ul>
+                                <li><code>drug_ids</code>: List of drug identifiers</li>
+                                <li><code>entity_file</code>: Path to entity annotations file</li>
+                            </ul>
+                            
+                            <h4>Returns:</h4>
+                            <p>List of drug names</p>
+                        </div>
+                    </section>
+
+                    <section id="drugfilter">
+                        <h2>DrugFilter</h2>
+                        <p>Class for filtering drug candidates based on various criteria.</p>
+                        
+                        <div class="code-example">
+                            <h4>Constructor</h4>
+                            <pre><code>DrugFilter()</code></pre>
+                        </div>
+
+                        <div class="method-box">
+                            <h3>filter_drugs()</h3>
+                            <pre><code>filter_drugs(
+    input_file: str,
+    expression: str,
+    output_file: str,
+    sheet_names: Tuple[str, str] = ("annotated_drugs", "filtered_drugs")
+) -> None</code></pre>
+                            
+                            <p><strong>Description:</strong> Filter drugs based on logical expressions.</p>
+                            
+                            <h4>Parameters:</h4>
+                            <ul>
+                                <li><code>input_file</code>: Input Excel file path</li>
+                                <li><code>expression</code>: Filter expression (e.g., "score > 0.6 and existing == False")</li>
+                                <li><code>output_file</code>: Output Excel file path</li>
+                                <li><code>sheet_names</code>: Tuple of (input_sheet, output_sheet) names</li>
+                            </ul>
+                            
+                            <h4>Example:</h4>
+                            <pre><code>filter = DrugFilter()
+filter.filter_drugs(
+    input_file="results/annotated_drugs.xlsx",
+    expression="score > 0.7 and num_of_shared_genes_in_path >= 1",
+    output_file="results/filtered_drugs.xlsx"
+)</code></pre>
+                            
+                            <h4>Supported Filter Expressions:</h4>
+                            <ul>
+                                <li>Numerical comparisons: <code>></code>, <code><</code>, <code>>=</code>, <code><=</code>, <code>==</code>, <code>!=</code></li>
+                                <li>Logical operators: <code>and</code>, <code>or</code>, <code>not</code></li>
+                                <li>Boolean fields: <code>existing</code>, <code>is_key_gene</code></li>
+                                <li>String matching and pattern matching</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="visualizer">
+                        <h2>Visualizer</h2>
+                        <p>Class for generating comprehensive visualizations and reports.</p>
+                        
+                        <div class="code-example">
+                            <h4>Constructor</h4>
+                            <pre><code>Visualizer()</code></pre>
+                        </div>
+
+                        <div class="method-box">
+                            <h3>create_visualization()</h3>
+                            <pre><code>create_visualization(
+    data_file: str,
+    viz_type: str,
+    output_file: str,
+    sheet_names: Tuple[str, str] = ("annotated_drugs", "filtered_drugs")
+) -> str</code></pre>
+                            
+                            <p><strong>Description:</strong> Generate specific visualization chart.</p>
+                            
+                            <h4>Parameters:</h4>
+                            <ul>
+                                <li><code>data_file</code>: Input data file path</li>
+                                <li><code>viz_type</code>: Visualization type (see supported types below)</li>
+                                <li><code>output_file</code>: Output file path</li>
+                                <li><code>sheet_names</code>: Tuple of sheet names for input data</li>
+                            </ul>
+                            
+                            <h4>Supported Visualization Types:</h4>
+                            <ul>
+                                <li><code>score_distribution</code> - Score distribution histogram</li>
+                                <li><code>score_boxplot</code> - Score distribution by existing status</li>
+                                <li><code>disease_similarity</code> - Disease similarity heatmap</li>
+                                <li><code>network_centrality</code> - Network centrality analysis</li>
+                                <li><code>shared_genes_pathways</code> - Gene and pathway overlap</li>
+                                <li><code>drug_similarity_network</code> - Drug similarity network</li>
+                                <li><code>shared_gene_count</code> - Shared gene count distribution</li>
+                                <li><code>score_vs_degree</code> - Score vs network degree</li>
+                            </ul>
+                        </div>
+
+                        <div class="method-box">
+                            <h3>generate_report()</h3>
+                            <pre><code>generate_report(
+    data_file: str,
+    output_file: str,
+    title: str = "Drug Discovery Analysis Report"
+) -> str</code></pre>
+                            
+                            <p><strong>Description:</strong> Generate comprehensive HTML report with all visualizations.</p>
+                            
+                            <h4>Parameters:</h4>
+                            <ul>
+                                <li><code>data_file</code>: Input data file path</li>
+                                <li><code>output_file</code>: Output HTML file path</li>
+                                <li><code>title</code>: Report title</li>
+                            </ul>
+                            
+                            <h4>Returns:</h4>
+                            <p>Path to generated HTML report</p>
+                        </div>
+                    </section>
+
+                    <section id="command-line">
+                        <h2>Command Line Interface</h2>
+                        
+                        <h3>Main Commands</h3>
+                        
+                        <div class="usage-box">
+                            <h4>Run Analysis</h4>
+                            <pre><code>drugs4disease run [OPTIONS]</code></pre>
+                            
+                            <h5>Options:</h5>
+                            <ul>
+                                <li><code>--disease</code>: Disease ID (required)</li>
+                                <li><code>--output-dir</code>: Output directory (required)</li>
+                                <li><code>--model</code>: KGE model type (default: TransE_l2)</li>
+                                <li><code>--top-n-diseases</code>: Number of similar diseases (default: 100)</li>
+                                <li><code>--gamma</code>: Margin parameter (default: 12.0)</li>
+                                <li><code>--threshold</code>: Drug filtering threshold (default: 0.5)</li>
+                                <li><code>--top-n-drugs</code>: Number of drugs to analyze (default: 1000)</li>
+                            </ul>
+                        </div>
+
+                        <div class="usage-box">
+                            <h4>Filter Drugs</h4>
+                            <pre><code>drugs4disease filter [OPTIONS]</code></pre>
+                            
+                            <h5>Options:</h5>
+                            <ul>
+                                <li><code>--input-file</code>: Input Excel file (required)</li>
+                                <li><code>--expression</code>: Filter expression (required)</li>
+                                <li><code>--output-file</code>: Output Excel file (required)</li>
+                            </ul>
+                        </div>
+
+                        <div class="usage-box">
+                            <h4>Generate Visualizations</h4>
+                            <pre><code>drugs4disease visualize [OPTIONS]</code></pre>
+                            
+                            <h5>Options:</h5>
+                            <ul>
+                                <li><code>--input-file</code>: Input Excel file (required)</li>
+                                <li><code>--output-dir</code>: Output directory (required)</li>
+                                <li><code>--title</code>: Report title (optional)</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="data-structures">
+                        <h2>Data Structures</h2>
+                        
+                        <h3>Input Data Format</h3>
+                        
+                        <div class="format-box">
+                            <h4>Entity Annotations (annotated_entities.tsv)</h4>
+                            <pre><code>id  label   name
+MONDO:0004979  Disease  asthma
+CHEBI:12345    Compound aspirin
+HGNC:1234      Gene     TNF</code></pre>
+                        </div>
+
+                        <div class="format-box">
+                            <h4>Knowledge Graph (knowledge_graph.tsv)</h4>
+                            <pre><code>source_id  source_type  source_name  target_id  target_type  target_name  relation_type
+CHEBI:12345  Compound  aspirin  MONDO:0004979  Disease  asthma  GNBR::T::Compound:Disease
+HGNC:1234    Gene      TNF      MONDO:0004979  Disease  asthma  GNBR::T::Gene:Disease</code></pre>
+                        </div>
+
+                        <div class="format-box">
+                            <h4>Entity Embeddings (entity_embeddings.tsv)</h4>
+                            <pre><code>entity_id  entity_type  embedding
+MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...
+CHEBI:12345    Compound 0.5|0.6|0.7|0.8|...</code></pre>
+                        </div>
+
+                        <h3>Output Data Format</h3>
+                        
+                        <div class="format-box">
+                            <h4>Annotated Drugs (annotated_drugs.xlsx)</h4>
+                            <p>Excel file with multiple sheets containing:</p>
+                            <ul>
+                                <li><strong>annotated_drugs</strong>: Main results with all annotations</li>
+                                <li><strong>predicted_drugs</strong>: Initial drug predictions</li>
+                                <li><strong>shared_genes_pathways</strong>: Gene and pathway overlap analysis</li>
+                                <li><strong>shared_diseases</strong>: Disease similarity analysis</li>
+                                <li><strong>network_annotations</strong>: Network centrality features</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="error-handling">
+                        <h2>Error Handling</h2>
+                        
+                        <h3>Common Exceptions</h3>
+                        
+                        <div class="troubleshoot-box">
+                            <h4>FileNotFoundError</h4>
+                            <p><strong>Cause:</strong> Required data files not found</p>
+                            <p><strong>Solution:</strong> Verify file paths and run data validation</p>
+                        </div>
+
+                        <div class="troubleshoot-box">
+                            <h4>ValueError</h4>
+                            <p><strong>Cause:</strong> Invalid parameters or data format</p>
+                            <p><strong>Solution:</strong> Check parameter values and data format</p>
+                        </div>
+
+                        <div class="troubleshoot-box">
+                            <h4>MemoryError</h4>
+                            <p><strong>Cause:</strong> Insufficient memory for large datasets</p>
+                            <p><strong>Solution:</strong> Reduce dataset size or increase system memory</p>
+                        </div>
+
+                        <h3>Error Handling Best Practices</h3>
+                        <ul>
+                            <li>Always validate data before running analysis</li>
+                            <li>Use try-catch blocks for file operations</li>
+                            <li>Check system resources before large computations</li>
+                            <li>Implement proper logging for debugging</li>
+                        </ul>
+                    </section>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BioMedGPS Explainer</h3>
+                    <p>A powerful toolkit for drug discovery and network medicine analysis</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="user-guide.html">User Guide</a></li>
+                        <li><a href="examples.html">Examples</a></li>
+                        <li><a href="https://github.com/your-repo/biomedgps-explainer">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="model-usage.html">Model Usage</a></li>
+                        <li><a href="data-preparation.html">Data Preparation</a></li>
+                        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BioMedGPS Explainer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html> 

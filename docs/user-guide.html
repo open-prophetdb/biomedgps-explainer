@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - BioMedGPS Explainer</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/docs.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-dna"></i>
+                <span>BioMedGPS Explainer</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="user-guide.html" class="nav-link active">User Guide</a></li>
+                <li><a href="api.html" class="nav-link">API</a></li>
+                <li><a href="examples.html" class="nav-link">Examples</a></li>
+                <li><a href="model-usage.html" class="nav-link">Model Usage</a></li>
+                <li><a href="https://github.com/your-repo/biomedgps-explainer" class="nav-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>User Guide</h1>
+            <p>Complete step-by-step guide for using BioMedGPS Explainer</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Table of Contents -->
+                <aside class="sidebar">
+                    <nav class="toc">
+                        <h3>Table of Contents</h3>
+                        <ul>
+                            <li><a href="#introduction">Introduction</a></li>
+                            <li><a href="#installation">Installation</a></li>
+                            <li><a href="#getting-started">Getting Started</a></li>
+                            <li><a href="#data-preparation">Data Preparation</a></li>
+                            <li><a href="#basic-usage">Basic Usage</a></li>
+                            <li><a href="#advanced-features">Advanced Features</a></li>
+                            <li><a href="#visualization-guide">Visualization Guide</a></li>
+                            <li><a href="#troubleshooting">Troubleshooting</a></li>
+                            <li><a href="#best-practices">Best Practices</a></li>
+                            <li><a href="#faq">FAQ</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <!-- Content -->
+                <article class="content">
+                    <section id="introduction">
+                        <h2>Introduction</h2>
+                        <p>BioMedGPS Explainer is a comprehensive toolkit for drug discovery analysis using knowledge graph embeddings. This guide will walk you through the complete process from installation to generating comprehensive analysis reports.</p>
+                        
+                        <h3>What You'll Learn</h3>
+                        <ul>
+                            <li>How to set up and install the toolkit</li>
+                            <li>How to prepare and validate your data</li>
+                            <li>How to run drug discovery analysis</li>
+                            <li>How to filter and visualize results</li>
+                            <li>How to interpret the outputs</li>
+                            <li>How to troubleshoot common issues</li>
+                        </ul>
+                    </section>
+
+                    <section id="installation">
+                        <h2>Installation</h2>
+                        
+                        <h3>System Requirements</h3>
+                        <ul>
+                            <li><strong>Python:</strong> 3.8 or higher</li>
+                            <li><strong>Memory:</strong> At least 8GB RAM (16GB recommended for large datasets)</li>
+                            <li><strong>Storage:</strong> At least 5GB free space for model files and results</li>
+                            <li><strong>Operating System:</strong> Windows, macOS, or Linux</li>
+                        </ul>
+
+                        <h3>Step-by-Step Installation</h3>
+                        
+                        <div class="step-box">
+                            <h4>1. Clone the Repository</h4>
+                            <pre><code>git clone &lt;repository-url&gt;
+cd biomedgps-explainer</code></pre>
+                        </div>
+
+                        <div class="step-box">
+                            <h4>2. Create Virtual Environment (Recommended)</h4>
+                            <pre><code>python -m venv biomedgps_env
+
+# On Windows
+biomedgps_env\Scripts\activate
+
+# On macOS/Linux
+source biomedgps_env/bin/activate</code></pre>
+                        </div>
+
+                        <div class="step-box">
+                            <h4>3. Install the Package</h4>
+                            <pre><code>pip install -e .</code></pre>
+                        </div>
+
+                        <div class="step-box">
+                            <h4>4. Verify Installation</h4>
+                            <pre><code>drugs4disease --help</code></pre>
+                        </div>
+                    </section>
+
+                    <section id="getting-started">
+                        <h2>Getting Started</h2>
+                        
+                        <h3>Quick Start Example</h3>
+                        
+                        <div class="step-box">
+                            <h4>1. Prepare Data Directory</h4>
+                            <pre><code>mkdir -p data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/</code></pre>
+                        </div>
+
+                        <div class="step-box">
+                            <h4>2. Add Your Model Files</h4>
+                            <ul>
+                                <li>Place your BioMedGPS model files in the data directory</li>
+                                <li>Supports both ZIP and uncompressed TSV formats</li>
+                            </ul>
+                        </div>
+
+                        <div class="step-box">
+                            <h4>3. Validate Data</h4>
+                            <pre><code>python3 examples/run_data_validation.py</code></pre>
+                        </div>
+
+                        <div class="step-box">
+                            <h4>4. Run Complete Analysis</h4>
+                            <pre><code>python3 examples/run_full_example.py</code></pre>
+                        </div>
+
+                        <div class="step-box">
+                            <h4>5. View Results</h4>
+                            <ul>
+                                <li>Check the <code>results/</code> directory for output files</li>
+                                <li>Open <code>results/visualization_report/analysis_report.html</code> for the interactive report</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="data-preparation">
+                        <h2>Data Preparation</h2>
+                        
+                        <h3>Required Files</h3>
+                        <p>The toolkit requires four main data files:</p>
+                        <ol>
+                            <li><strong>annotated_entities.tsv</strong> - Entity annotations</li>
+                            <li><strong>knowledge_graph.tsv</strong> - Knowledge graph triples</li>
+                            <li><strong>entity_embeddings.tsv</strong> - Entity embeddings</li>
+                            <li><strong>relation_type_embeddings.tsv</strong> - Relation embeddings</li>
+                        </ol>
+
+                        <h3>File Formats</h3>
+                        
+                        <div class="format-box">
+                            <h4>Entity File Format</h4>
+                            <pre><code>id  label   name
+MONDO:0004979  Disease  asthma
+CHEBI:12345    Compound aspirin</code></pre>
+                        </div>
+
+                        <div class="format-box">
+                            <h4>Knowledge Graph Format</h4>
+                            <pre><code>source_id  source_type  source_name  target_id  target_type  target_name  relation_type
+CHEBI:12345  Compound  aspirin  MONDO:0004979  Disease  asthma  GNBR::T::Compound:Disease</code></pre>
+                        </div>
+
+                        <div class="format-box">
+                            <h4>Embeddings Format</h4>
+                            <pre><code>entity_id  entity_type  embedding
+MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...</code></pre>
+                        </div>
+
+                        <h3>Data Validation</h3>
+                        <p>Always validate your data before running analysis:</p>
+                        <pre><code>python3 examples/run_data_validation.py</code></pre>
+                        <p>This will:</p>
+                        <ul>
+                            <li>Check file existence and format</li>
+                            <li>Automatically decompress ZIP files if needed</li>
+                            <li>Verify data integrity</li>
+                            <li>Provide detailed error messages if issues are found</li>
+                        </ul>
+                    </section>
+
+                    <section id="basic-usage">
+                        <h2>Basic Usage</h2>
+                        
+                        <h3>Command Line Interface</h3>
+                        
+                        <div class="usage-box">
+                            <h4>1. Run Complete Analysis</h4>
+                            <pre><code>drugs4disease run --disease MONDO:0004979 --output-dir results/</code></pre>
+                            <p><strong>Parameters:</strong></p>
+                            <ul>
+                                <li><code>--disease</code>: Disease ID (required)</li>
+                                <li><code>--output-dir</code>: Output directory (required)</li>
+                                <li><code>--model</code>: KGE model type (default: TransE_l2)</li>
+                                <li><code>--top-n-diseases</code>: Number of similar diseases (default: 100)</li>
+                                <li><code>--gamma</code>: Margin parameter (default: 12.0)</li>
+                                <li><code>--threshold</code>: Drug filtering threshold (default: 0.5)</li>
+                            </ul>
+                        </div>
+
+                        <div class="usage-box">
+                            <h4>2. Filter Results</h4>
+                            <pre><code>drugs4disease filter \
+  --input-file results/annotated_drugs.xlsx \
+  --expression "score > 0.6 and existing == False" \
+  --output-file results/filtered_drugs.xlsx</code></pre>
+                        </div>
+
+                        <div class="usage-box">
+                            <h4>3. Generate Visualizations</h4>
+                            <pre><code>drugs4disease visualize \
+  --input-file results/filtered_drugs.xlsx \
+  --output-dir results/visualizations/</code></pre>
+                        </div>
+
+                        <h3>Python API</h3>
+                        
+                        <div class="code-example">
+                            <h4>Basic Workflow</h4>
+                            <pre><code>from drugs4disease.core import DrugDiseaseCore
+from drugs4disease.filter import DrugFilter
+from drugs4disease.visualizer import Visualizer
+
+# Initialize components
+core = DrugDiseaseCore()
+filter_tool = DrugFilter()
+visualizer = Visualizer()
+
+# Run analysis
+core.run_full_pipeline(
+    disease_id="MONDO:0004979",
+    output_dir="results/",
+    top_n_diseases=50,
+    top_n_drugs=100
+)
+
+# Filter results
+filter_tool.filter_drugs(
+    input_file="results/annotated_drugs.xlsx",
+    expression="score > 0.7 and num_of_shared_genes_in_path >= 1",
+    output_file="results/filtered_drugs.xlsx"
+)
+
+# Generate report
+visualizer.generate_report(
+    data_file="results/filtered_drugs.xlsx",
+    output_file="results/analysis_report.html",
+    title="Drug Discovery Analysis Report"
+)</code></pre>
+                        </div>
+                    </section>
+
+                    <section id="advanced-features">
+                        <h2>Advanced Features</h2>
+                        
+                        <h3>Advanced Filtering</h3>
+                        <p>The toolkit supports complex logical expressions for drug filtering:</p>
+                        
+                        <div class="code-example">
+                            <h4>Filter Expressions Examples</h4>
+                            <pre><code># High-scoring new drugs
+"score > 0.7 and existing == False"
+
+# Drugs with shared genes and pathways
+"num_of_shared_genes_in_path >= 2 and num_of_shared_pathways >= 1"
+
+# Network-central drugs
+"drug_degree > 10 and num_of_key_genes >= 3"
+
+# Complex combination
+"score > 0.6 and existing == False and (num_of_shared_genes_in_path >= 1 or num_of_shared_pathways >= 1)"</code></pre>
+                        </div>
+
+                        <h3>Custom Parameters</h3>
+                        <p>You can customize various parameters for different analysis scenarios:</p>
+                        <ul>
+                            <li><strong>Model Selection:</strong> Choose between different KGE models</li>
+                            <li><strong>Threshold Adjustment:</strong> Fine-tune prediction thresholds</li>
+                            <li><strong>Network Analysis:</strong> Configure centrality calculations</li>
+                            <li><strong>Pathway Analysis:</strong> Set enrichment parameters</li>
+                        </ul>
+                    </section>
+
+                    <section id="visualization-guide">
+                        <h2>Visualization Guide</h2>
+                        
+                        <h3>Output Files</h3>
+                        <p>The toolkit generates comprehensive output files:</p>
+                        
+                        <h4>Main Results</h4>
+                        <ul>
+                            <li><code>annotated_drugs.xlsx</code> - Complete drug analysis with all annotations</li>
+                            <li><code>filtered_drugs.xlsx</code> - Filtered drug candidates based on criteria</li>
+                        </ul>
+
+                        <h4>Visualization Reports</h4>
+                        <ul>
+                            <li><code>analysis_report.html</code> - Interactive HTML report with all visualizations</li>
+                            <li>Individual chart files (PNG/JSON) for each analysis type</li>
+                        </ul>
+
+                        <h4>Analysis Components</h4>
+                        <ul>
+                            <li><code>predicted_drugs.xlsx</code> - Initial drug predictions</li>
+                            <li><code>shared_genes_pathways.xlsx</code> - Gene and pathway overlap analysis</li>
+                            <li><code>shared_diseases.xlsx</code> - Disease similarity analysis</li>
+                            <li><code>network_annotations.xlsx</code> - Network centrality features</li>
+                        </ul>
+
+                        <h3>Visualization Types</h3>
+                        <p>The toolkit generates 12 different types of visualizations:</p>
+                        <ol>
+                            <li><strong>Score Distribution</strong> - Predicted score distribution of candidate drugs</li>
+                            <li><strong>Predicted Score Boxplot</strong> - Score distribution by knowledge graph inclusion</li>
+                            <li><strong>Disease Similarity Heatmap</strong> - Drug similarity based on shared diseases</li>
+                            <li><strong>Network Centrality</strong> - Drug network centrality analysis</li>
+                            <li><strong>Shared Genes and Pathways</strong> - Comprehensive gene/pathway overlap analysis</li>
+                            <li><strong>Drug Similarity Network</strong> - Interactive drug relationship network</li>
+                            <li><strong>Shared Gene Count</strong> - Distribution of shared genes between drugs and diseases</li>
+                            <li><strong>Score vs Degree</strong> - Relationship between network degree and predicted scores</li>
+                        </ol>
+                    </section>
+
+                    <section id="troubleshooting">
+                        <h2>Troubleshooting</h2>
+                        
+                        <h3>Common Issues</h3>
+                        
+                        <div class="troubleshoot-box">
+                            <h4>Memory Issues</h4>
+                            <p><strong>Symptoms:</strong> Out of memory errors, slow performance</p>
+                            <p><strong>Solutions:</strong></p>
+                            <ul>
+                                <li>Reduce <code>top_n_diseases</code> and <code>top_n_drugs</code> parameters</li>
+                                <li>Use smaller model files if available</li>
+                                <li>Close other applications to free up memory</li>
+                            </ul>
+                        </div>
+
+                        <div class="troubleshoot-box">
+                            <h4>File Not Found Errors</h4>
+                            <p><strong>Symptoms:</strong> "File not found" or "No such file or directory" errors</p>
+                            <p><strong>Solutions:</strong></p>
+                            <ul>
+                                <li>Verify file paths and names</li>
+                                <li>Run data validation script</li>
+                                <li>Check file permissions</li>
+                            </ul>
+                        </div>
+
+                        <div class="troubleshoot-box">
+                            <h4>Import Errors</h4>
+                            <p><strong>Symptoms:</strong> ModuleNotFoundError or ImportError</p>
+                            <p><strong>Solutions:</strong></p>
+                            <ul>
+                                <li>Ensure virtual environment is activated</li>
+                                <li>Reinstall the package: <code>pip install -e .</code></li>
+                                <li>Check Python version compatibility</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="best-practices">
+                        <h2>Best Practices</h2>
+                        
+                        <h3>Data Management</h3>
+                        <ul>
+                            <li>Always validate your data before running analysis</li>
+                            <li>Keep backup copies of original data files</li>
+                            <li>Use descriptive output directory names</li>
+                            <li>Organize results in separate directories for different analyses</li>
+                        </ul>
+
+                        <h3>Performance Optimization</h3>
+                        <ul>
+                            <li>Start with smaller parameter values and scale up</li>
+                            <li>Use SSD storage for better I/O performance</li>
+                            <li>Monitor system resources during analysis</li>
+                            <li>Consider using cloud computing for large datasets</li>
+                        </ul>
+
+                        <h3>Analysis Workflow</h3>
+                        <ul>
+                            <li>Document your analysis parameters and settings</li>
+                            <li>Use version control for your analysis scripts</li>
+                            <li>Validate results with multiple approaches</li>
+                            <li>Keep detailed logs of your analysis process</li>
+                        </ul>
+                    </section>
+
+                    <section id="faq">
+                        <h2>FAQ</h2>
+                        
+                        <div class="faq-item">
+                            <h3>Q: What disease IDs are supported?</h3>
+                            <p>A: The toolkit supports MONDO disease IDs (e.g., MONDO:0004979 for asthma). You can find disease IDs in the MONDO ontology or use the entity file to look up available diseases.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h3>Q: How long does analysis take?</h3>
+                            <p>A: Analysis time depends on dataset size and parameters. Small analyses (100 drugs) typically take 5-10 minutes, while large analyses (1000+ drugs) can take 30-60 minutes.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h3>Q: Can I use my own KGE model?</h3>
+                            <p>A: Yes, the toolkit is designed to work with any KGE model that follows the specified file formats. See the Model Usage guide for details.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h3>Q: How do I interpret the results?</h3>
+                            <p>A: Results include multiple metrics and visualizations. Higher scores indicate stronger predicted associations. Use the filtering tools to focus on the most promising candidates.</p>
+                        </div>
+
+                        <div class="faq-item">
+                            <h3>Q: What if I get no results?</h3>
+                            <p>A: Try lowering the threshold parameter or increasing the number of similar diseases. Also check that your disease ID exists in the knowledge graph.</p>
+                        </div>
+                    </section>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BioMedGPS Explainer</h3>
+                    <p>A powerful toolkit for drug discovery and network medicine analysis</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="api.html">API Documentation</a></li>
+                        <li><a href="examples.html">Examples</a></li>
+                        <li><a href="https://github.com/your-repo/biomedgps-explainer">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="model-usage.html">Model Usage</a></li>
+                        <li><a href="data-preparation.html">Data Preparation</a></li>
+                        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BioMedGPS Explainer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html> 

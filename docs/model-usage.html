@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Usage Guide - BioMedGPS Explainer</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/docs.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-dna"></i>
+                <span>BioMedGPS Explainer</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">Home</a></li>
+                <li><a href="user-guide.html" class="nav-link">User Guide</a></li>
+                <li><a href="api.html" class="nav-link">API</a></li>
+                <li><a href="examples.html" class="nav-link">Examples</a></li>
+                <li><a href="model-usage.html" class="nav-link active">Model Usage</a></li>
+                <li><a href="https://github.com/your-repo/biomedgps-explainer" class="nav-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Model Usage Guide</h1>
+            <p>Comprehensive guide for working with Knowledge Graph Embedding models</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <div class="content-wrapper">
+                <!-- Table of Contents -->
+                <aside class="sidebar">
+                    <nav class="toc">
+                        <h3>Model Guide</h3>
+                        <ul>
+                            <li><a href="#overview">Overview</a></li>
+                            <li><a href="#model-types">Model Types</a></li>
+                            <li><a href="#data-format">Data Format</a></li>
+                            <li><a href="#model-selection">Model Selection</a></li>
+                            <li><a href="#parameters">Parameters</a></li>
+                            <li><a href="#performance">Performance</a></li>
+                            <li><a href="#custom-models">Custom Models</a></li>
+                        </ul>
+                    </nav>
+                </aside>
+
+                <!-- Content -->
+                <article class="content">
+                    <section id="overview">
+                        <h2>Overview</h2>
+                        <p>BioMedGPS Explainer uses Knowledge Graph Embedding (KGE) models to predict potential drug-disease associations. This guide explains how to work with different model types, understand their parameters, and optimize performance for your specific use case.</p>
+                        
+                        <div class="info-box">
+                            <h3>What are Knowledge Graph Embeddings?</h3>
+                            <p>Knowledge Graph Embeddings represent entities (drugs, diseases, genes) and relationships as vectors in a continuous space. This allows the model to learn complex patterns and make predictions about potential associations between drugs and diseases.</p>
+                        </div>
+                    </section>
+
+                    <section id="model-types">
+                        <h2>Supported Model Types</h2>
+                        
+                        <div class="model-grid">
+                            <div class="model-card">
+                                <div class="model-icon">
+                                    <i class="fas fa-cube"></i>
+                                </div>
+                                <h3>TransE</h3>
+                                <p>Translation-based model that treats relationships as translations in the embedding space.</p>
+                                <div class="model-pros-cons">
+                                    <div class="pros">
+                                        <h4>Pros:</h4>
+                                        <ul>
+                                            <li>Simple and interpretable</li>
+                                            <li>Fast training</li>
+                                            <li>Good for 1-to-1 relationships</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cons">
+                                        <h4>Cons:</h4>
+                                        <ul>
+                                            <li>Limited for complex relationships</li>
+                                            <li>May struggle with 1-to-many relationships</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="model-card">
+                                <div class="model-icon">
+                                    <i class="fas fa-sphere"></i>
+                                </div>
+                                <h3>TransH</h3>
+                                <p>Hyperplane-based translation model that projects entities onto relation-specific hyperplanes.</p>
+                                <div class="model-pros-cons">
+                                    <div class="pros">
+                                        <h4>Pros:</h4>
+                                        <ul>
+                                            <li>Better for complex relationships</li>
+                                            <li>Handles 1-to-many relationships</li>
+                                            <li>More flexible than TransE</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cons">
+                                        <h4>Cons:</h4>
+                                        <ul>
+                                            <li>More complex training</li>
+                                            <li>Higher computational cost</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="model-card">
+                                <div class="model-icon">
+                                    <i class="fas fa-torus"></i>
+                                </div>
+                                <h3>RotatE</h3>
+                                <p>Rotation-based model that treats relationships as rotations in complex space.</p>
+                                <div class="model-pros-cons">
+                                    <div class="pros">
+                                        <h4>Pros:</h4>
+                                        <ul>
+                                            <li>Excellent for symmetric relationships</li>
+                                            <li>Handles complex patterns</li>
+                                            <li>Good theoretical foundation</li>
+                                        </ul>
+                                    </div>
+                                    <div class="cons">
+                                        <h4>Cons:</h4>
+                                        <ul>
+                                            <li>Complex implementation</li>
+                                            <li>Slower training</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="data-format">
+                        <h2>Data Format Requirements</h2>
+                        
+                        <h3>Required Files</h3>
+                        <p>The toolkit requires four main data files in TSV (Tab-Separated Values) format:</p>
+                        
+                        <div class="format-box">
+                            <h4>1. Entity Annotations (annotated_entities.tsv)</h4>
+                            <pre><code>id  label   name
+MONDO:0004979  Disease  asthma
+CHEBI:12345    Compound aspirin
+HGNC:1234      Gene     TNF</code></pre>
+                            <p><strong>Columns:</strong></p>
+                            <ul>
+                                <li><code>id</code>: Unique entity identifier</li>
+                                <li><code>label</code>: Entity type (Disease, Compound, Gene, etc.)</li>
+                                <li><code>name</code>: Human-readable entity name</li>
+                            </ul>
+                        </div>
+
+                        <div class="format-box">
+                            <h4>2. Knowledge Graph (knowledge_graph.tsv)</h4>
+                            <pre><code>source_id  source_type  source_name  target_id  target_type  target_name  relation_type
+CHEBI:12345  Compound  aspirin  MONDO:0004979  Disease  asthma  GNBR::T::Compound:Disease
+HGNC:1234    Gene      TNF      MONDO:0004979  Disease  asthma  GNBR::T::Gene:Disease</code></pre>
+                            <p><strong>Columns:</strong></p>
+                            <ul>
+                                <li><code>source_id</code>: Source entity identifier</li>
+                                <li><code>source_type</code>: Source entity type</li>
+                                <li><code>source_name</code>: Source entity name</li>
+                                <li><code>target_id</code>: Target entity identifier</li>
+                                <li><code>target_type</code>: Target entity type</li>
+                                <li><code>target_name</code>: Target entity name</li>
+                                <li><code>relation_type</code>: Type of relationship</li>
+                            </ul>
+                        </div>
+
+                        <div class="format-box">
+                            <h4>3. Entity Embeddings (entity_embeddings.tsv)</h4>
+                            <pre><code>entity_id  entity_type  embedding
+MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...
+CHEBI:12345    Compound 0.5|0.6|0.7|0.8|...</code></pre>
+                            <p><strong>Columns:</strong></p>
+                            <ul>
+                                <li><code>entity_id</code>: Entity identifier</li>
+                                <li><code>entity_type</code>: Entity type</li>
+                                <li><code>embedding</code>: Vector representation (pipe-separated)</li>
+                            </ul>
+                        </div>
+
+                        <div class="format-box">
+                            <h4>4. Relation Embeddings (relation_type_embeddings.tsv)</h4>
+                            <pre><code>relation_type  embedding
+GNBR::T::Compound:Disease  0.1|0.2|0.3|0.4|...
+GNBR::T::Gene:Disease      0.5|0.6|0.7|0.8|...</code></pre>
+                            <p><strong>Columns:</strong></p>
+                            <ul>
+                                <li><code>relation_type</code>: Relationship type</li>
+                                <li><code>embedding</code>: Vector representation (pipe-separated)</li>
+                            </ul>
+                        </div>
+                    </section>
+
+                    <section id="model-selection">
+                        <h2>Model Selection Guide</h2>
+                        
+                        <h3>Choosing the Right Model</h3>
+                        <p>The choice of KGE model depends on your specific use case and data characteristics:</p>
+                        
+                        <div class="selection-guide">
+                            <div class="selection-item">
+                                <h4>For Simple Drug-Disease Associations</h4>
+                                <p><strong>Recommended:</strong> TransE_l2</p>
+                                <p>Use when you have straightforward drug-disease relationships and want fast, reliable predictions.</p>
+                            </div>
+
+                            <div class="selection-item">
+                                <h4>For Complex Biological Networks</h4>
+                                <p><strong>Recommended:</strong> TransH or RotatE</p>
+                                <p>Use when dealing with complex multi-entity relationships and biological pathways.</p>
+                            </div>
+
+                            <div class="selection-item">
+                                <h4>For Large-Scale Analysis</h4>
+                                <p><strong>Recommended:</strong> TransE_l2</p>
+                                <p>Use for large datasets where computational efficiency is important.</p>
+                            </div>
+                        </div>
+
+                        <h3>Model Comparison</h3>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Model</th>
+                                    <th>Training Speed</th>
+                                    <th>Prediction Accuracy</th>
+                                    <th>Memory Usage</th>
+                                    <th>Best For</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>TransE_l2</td>
+                                    <td>Fast</td>
+                                    <td>Good</td>
+                                    <td>Low</td>
+                                    <td>General use, large datasets</td>
+                                </tr>
+                                <tr>
+                                    <td>TransH</td>
+                                    <td>Medium</td>
+                                    <td>Better</td>
+                                    <td>Medium</td>
+                                    <td>Complex relationships</td>
+                                </tr>
+                                <tr>
+                                    <td>RotatE</td>
+                                    <td>Slow</td>
+                                    <td>Best</td>
+                                    <td>High</td>
+                                    <td>Research, complex patterns</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </section>
+
+                    <section id="parameters">
+                        <h2>Model Parameters</h2>
+                        
+                        <h3>Key Parameters</h3>
+                        
+                        <div class="parameter-box">
+                            <h4>gamma (Margin Parameter)</h4>
+                            <p><strong>Default:</strong> 12.0</p>
+                            <p><strong>Range:</strong> 1.0 - 50.0</p>
+                            <p><strong>Description:</strong> Controls the margin between positive and negative samples during training. Higher values make the model more discriminative but may reduce generalization.</p>
+                            <p><strong>Recommendation:</strong> Start with 12.0 and adjust based on validation performance.</p>
+                        </div>
+
+                        <div class="parameter-box">
+                            <h4>threshold (Prediction Threshold)</h4>
+                            <p><strong>Default:</strong> 0.5</p>
+                            <p><strong>Range:</strong> 0.0 - 1.0</p>
+                            <p><strong>Description:</strong> Minimum score threshold for considering a drug-disease association as positive.</p>
+                            <p><strong>Recommendation:</strong> Use 0.5-0.7 for balanced precision/recall, higher for precision, lower for recall.</p>
+                        </div>
+
+                        <div class="parameter-box">
+                            <h4>top_n_diseases</h4>
+                            <p><strong>Default:</strong> 100</p>
+                            <p><strong>Range:</strong> 10 - 1000</p>
+                            <p><strong>Description:</strong> Number of similar diseases to consider for drug prediction.</p>
+                            <p><strong>Recommendation:</strong> Use 50-100 for most cases, increase for rare diseases.</p>
+                        </div>
+
+                        <div class="parameter-box">
+                            <h4>top_n_drugs</h4>
+                            <p><strong>Default:</strong> 1000</p>
+                            <p><strong>Range:</strong> 100 - 10000</p>
+                            <p><strong>Description:</strong> Maximum number of drugs to analyze.</p>
+                            <p><strong>Recommendation:</strong> Use 500-1000 for focused analysis, higher for comprehensive screening.</p>
+                        </div>
+
+                        <h3>Parameter Optimization</h3>
+                        <div class="optimization-steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Start with Defaults</h4>
+                                    <p>Begin with the default parameter values to establish a baseline performance.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Adjust Threshold</h4>
+                                    <p>Fine-tune the prediction threshold based on your precision/recall requirements.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Optimize Gamma</h4>
+                                    <p>Experiment with different gamma values to find the optimal margin for your data.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Validate Results</h4>
+                                    <p>Use cross-validation or holdout sets to validate parameter choices.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="performance">
+                        <h2>Performance Optimization</h2>
+                        
+                        <h3>Computational Requirements</h3>
+                        <div class="performance-grid">
+                            <div class="perf-card">
+                                <h4>Memory Usage</h4>
+                                <ul>
+                                    <li><strong>Small datasets:</strong> 4-8 GB RAM</li>
+                                    <li><strong>Medium datasets:</strong> 8-16 GB RAM</li>
+                                    <li><strong>Large datasets:</strong> 16+ GB RAM</li>
+                                </ul>
+                            </div>
+                            <div class="perf-card">
+                                <h4>Processing Time</h4>
+                                <ul>
+                                    <li><strong>100 drugs:</strong> 5-10 minutes</li>
+                                    <li><strong>500 drugs:</strong> 15-30 minutes</li>
+                                    <li><strong>1000+ drugs:</strong> 30-60 minutes</li>
+                                </ul>
+                            </div>
+                            <div class="perf-card">
+                                <h4>Storage</h4>
+                                <ul>
+                                    <li><strong>Model files:</strong> 2-5 GB</li>
+                                    <li><strong>Results:</strong> 100-500 MB</li>
+                                    <li><strong>Total:</strong> 3-6 GB</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h3>Performance Tips</h3>
+                        <div class="tips-list">
+                            <div class="tip-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <div class="tip-content">
+                                    <h4>Use SSD Storage</h4>
+                                    <p>Solid-state drives significantly improve I/O performance for large model files.</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <div class="tip-content">
+                                    <h4>Optimize Parameters</h4>
+                                    <p>Start with smaller parameter values and scale up based on your computational resources.</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <div class="tip-content">
+                                    <h4>Batch Processing</h4>
+                                    <p>Process multiple diseases in batches to optimize memory usage and processing time.</p>
+                                </div>
+                            </div>
+                            <div class="tip-item">
+                                <i class="fas fa-lightbulb"></i>
+                                <div class="tip-content">
+                                    <h4>Monitor Resources</h4>
+                                    <p>Use system monitoring tools to track memory and CPU usage during analysis.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="custom-models">
+                        <h2>Using Custom Models</h2>
+                        
+                        <h3>Custom Model Integration</h3>
+                        <p>BioMedGPS Explainer supports custom KGE models that follow the specified data format. Here's how to integrate your own models:</p>
+                        
+                        <div class="custom-model-steps">
+                            <div class="step">
+                                <div class="step-number">1</div>
+                                <div class="step-content">
+                                    <h4>Prepare Your Data</h4>
+                                    <p>Ensure your model outputs follow the required TSV format for entity and relation embeddings.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">2</div>
+                                <div class="step-content">
+                                    <h4>Organize Files</h4>
+                                    <p>Place your model files in the appropriate data directory structure.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">3</div>
+                                <div class="step-content">
+                                    <h4>Validate Format</h4>
+                                    <p>Run the data validation script to ensure compatibility.</p>
+                                </div>
+                            </div>
+                            <div class="step">
+                                <div class="step-number">4</div>
+                                <div class="step-content">
+                                    <h4>Test Integration</h4>
+                                    <p>Run a small test analysis to verify your model works correctly.</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3>Model Validation</h3>
+                        <p>Before using a custom model, validate it using the built-in validation tools:</p>
+                        
+                        <pre><code># Validate custom model files
+python3 examples/run_data_validation.py --model-dir path/to/your/model
+
+# Test with small dataset
+python3 examples/run_full_example.py --disease MONDO:0004979 --top-n-drugs 10</code></pre>
+
+                        <h3>Best Practices for Custom Models</h3>
+                        <ul>
+                            <li><strong>Consistent Format:</strong> Ensure all files follow the exact TSV format specifications</li>
+                            <li><strong>Entity Coverage:</strong> Make sure your model covers all entities in your knowledge graph</li>
+                            <li><strong>Embedding Quality:</strong> Validate embedding quality using similarity metrics</li>
+                            <li><strong>Documentation:</strong> Document your model's training process and parameters</li>
+                        </ul>
+                    </section>
+                </article>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BioMedGPS Explainer</h3>
+                    <p>A powerful toolkit for drug discovery and network medicine analysis</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="user-guide.html">User Guide</a></li>
+                        <li><a href="api.html">API Documentation</a></li>
+                        <li><a href="https://github.com/your-repo/biomedgps-explainer">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="examples.html">Examples</a></li>
+                        <li><a href="data-preparation.html">Data Preparation</a></li>
+                        <li><a href="troubleshooting.html">Troubleshooting</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BioMedGPS Explainer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html> 

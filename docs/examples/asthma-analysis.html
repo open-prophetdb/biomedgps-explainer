@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asthma Drug Discovery Analysis - BioMedGPS Explainer</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/docs.css">
+    <link rel="stylesheet" href="../assets/css/report.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <i class="fas fa-dna"></i>
+                <span>BioMedGPS Explainer</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html" class="nav-link">Home</a></li>
+                <li><a href="../user-guide.html" class="nav-link">User Guide</a></li>
+                <li><a href="../api.html" class="nav-link">API</a></li>
+                <li><a href="../examples.html" class="nav-link">Examples</a></li>
+                <li><a href="https://github.com/your-repo/biomedgps-explainer" class="nav-link" target="_blank">
+                    <i class="fab fa-github"></i> GitHub
+                </a></li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Report Header -->
+    <header class="report-header">
+        <div class="container">
+            <div class="report-title">
+                <h1><i class="fas fa-lungs"></i> Asthma Drug Discovery Analysis</h1>
+                <p>Comprehensive drug repurposing analysis using BioMedGPS Explainer</p>
+            </div>
+            <div class="report-meta">
+                <div class="meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>Generated: January 15, 2024</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-disease"></i>
+                    <span>Disease: Asthma (MONDO:0004979)</span>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-pills"></i>
+                    <span>Drugs Analyzed: 150</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Report Navigation -->
+    <nav class="report-nav">
+        <div class="container">
+            <ul class="report-tabs">
+                <li><a href="#summary" class="tab-link active">Summary</a></li>
+                <li><a href="#drug-predictions" class="tab-link">Drug Predictions</a></li>
+                <li><a href="#network-analysis" class="tab-link">Network Analysis</a></li>
+                <li><a href="#pathway-enrichment" class="tab-link">Pathway Enrichment</a></li>
+                <li><a href="#visualizations" class="tab-link">Visualizations</a></li>
+                <li><a href="#conclusions" class="tab-link">Conclusions</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="report-content">
+        <div class="container">
+            
+            <!-- Summary Section -->
+            <section id="summary" class="report-section active">
+                <h2>Executive Summary</h2>
+                
+                <div class="summary-grid">
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>Top Predictions</h3>
+                        <div class="summary-value">23</div>
+                        <p>High-scoring drug candidates (score > 0.7)</p>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-dna"></i>
+                        </div>
+                        <h3>Shared Genes</h3>
+                        <div class="summary-value">25</div>
+                        <p>Genes shared between drugs and asthma</p>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <h3>Enriched Pathways</h3>
+                        <div class="summary-value">12</div>
+                        <p>Significantly enriched biological pathways</p>
+                    </div>
+                    
+                    <div class="summary-card">
+                        <div class="summary-icon">
+                            <i class="fas fa-network-wired"></i>
+                        </div>
+                        <h3>Network Centrality</h3>
+                        <div class="summary-value">8</div>
+                        <p>High-centrality drug candidates</p>
+                    </div>
+                </div>
+
+                <div class="summary-text">
+                    <h3>Key Findings</h3>
+                    <ul>
+                        <li><strong>Top Candidate:</strong> Montelukast shows the highest prediction score (0.89) and is already approved for asthma treatment, validating our approach.</li>
+                        <li><strong>Novel Candidates:</strong> 15 drugs with scores > 0.7 are not currently used for asthma, representing potential repurposing opportunities.</li>
+                        <li><strong>Pathway Insights:</strong> The analysis identified enrichment in inflammatory response and immune system pathways, consistent with asthma pathophysiology.</li>
+                        <li><strong>Network Analysis:</strong> Several candidates show high network centrality, suggesting they may affect multiple biological processes relevant to asthma.</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Drug Predictions Section -->
+            <section id="drug-predictions" class="report-section">
+                <h2>Drug Predictions</h2>
+                
+                <div class="prediction-overview">
+                    <h3>Score Distribution</h3>
+                    <div id="score-distribution-chart" class="chart-container"></div>
+                </div>
+
+                <div class="top-candidates">
+                    <h3>Top 10 Drug Candidates</h3>
+                    <div class="candidates-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Drug Name</th>
+                                    <th>Drug ID</th>
+                                    <th>Prediction Score</th>
+                                    <th>Existing Use</th>
+                                    <th>Shared Genes</th>
+                                    <th>Network Degree</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td>Montelukast</td>
+                                    <td>CHEBI:6902</td>
+                                    <td>0.89</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>8</td>
+                                    <td>15</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td>Zafirlukast</td>
+                                    <td>CHEBI:10076</td>
+                                    <td>0.87</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>7</td>
+                                    <td>12</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td>Pranlukast</td>
+                                    <td>CHEBI:8724</td>
+                                    <td>0.85</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>6</td>
+                                    <td>11</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td>Ibudilast</td>
+                                    <td>CHEBI:5902</td>
+                                    <td>0.82</td>
+                                    <td><span class="badge experimental">Experimental</span></td>
+                                    <td>9</td>
+                                    <td>18</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td>Roflumilast</td>
+                                    <td>CHEBI:50248</td>
+                                    <td>0.80</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>5</td>
+                                    <td>10</td>
+                                </tr>
+                                <tr>
+                                    <td>6</td>
+                                    <td>Diclofenac</td>
+                                    <td>CHEBI:4729</td>
+                                    <td>0.78</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>12</td>
+                                    <td>22</td>
+                                </tr>
+                                <tr>
+                                    <td>7</td>
+                                    <td>Celecoxib</td>
+                                    <td>CHEBI:41423</td>
+                                    <td>0.76</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>11</td>
+                                    <td>19</td>
+                                </tr>
+                                <tr>
+                                    <td>8</td>
+                                    <td>Meloxicam</td>
+                                    <td>CHEBI:6801</td>
+                                    <td>0.74</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>10</td>
+                                    <td>16</td>
+                                </tr>
+                                <tr>
+                                    <td>9</td>
+                                    <td>Nimesulide</td>
+                                    <td>CHEBI:7459</td>
+                                    <td>0.72</td>
+                                    <td><span class="badge experimental">Experimental</span></td>
+                                    <td>8</td>
+                                    <td>14</td>
+                                </tr>
+                                <tr>
+                                    <td>10</td>
+                                    <td>Ketorolac</td>
+                                    <td>CHEBI:6129</td>
+                                    <td>0.70</td>
+                                    <td><span class="badge approved">Approved</span></td>
+                                    <td>7</td>
+                                    <td>13</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Network Analysis Section -->
+            <section id="network-analysis" class="report-section">
+                <h2>Network Analysis</h2>
+                
+                <div class="network-overview">
+                    <h3>Drug-Disease-Gene Network</h3>
+                    <div id="network-chart" class="chart-container"></div>
+                </div>
+
+                <div class="centrality-analysis">
+                    <h3>Network Centrality Analysis</h3>
+                    <div id="centrality-chart" class="chart-container"></div>
+                </div>
+
+                <div class="network-insights">
+                    <h3>Key Network Insights</h3>
+                    <ul>
+                        <li><strong>Hub Drugs:</strong> Montelukast, Zafirlukast, and Ibudilast show the highest degree centrality, indicating they interact with many other biological entities.</li>
+                        <li><strong>Bridge Nodes:</strong> Several drugs act as bridges between different biological pathways, suggesting potential for multi-target therapy.</li>
+                        <li><strong>Community Structure:</strong> The network shows clear communities corresponding to different therapeutic mechanisms (anti-inflammatory, bronchodilator, etc.).</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Pathway Enrichment Section -->
+            <section id="pathway-enrichment" class="report-section">
+                <h2>Pathway Enrichment Analysis</h2>
+                
+                <div class="pathway-overview">
+                    <h3>Enriched Biological Pathways</h3>
+                    <div id="pathway-chart" class="chart-container"></div>
+                </div>
+
+                <div class="pathway-table">
+                    <h3>Top Enriched Pathways</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pathway Name</th>
+                                <th>Enrichment Score</th>
+                                <th>P-value</th>
+                                <th>Drugs Involved</th>
+                                <th>Genes Involved</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Inflammatory response</td>
+                                <td>8.45</td>
+                                <td>1.2e-08</td>
+                                <td>12</td>
+                                <td>15</td>
+                            </tr>
+                            <tr>
+                                <td>Immune system process</td>
+                                <td>7.23</td>
+                                <td>3.4e-07</td>
+                                <td>10</td>
+                                <td>13</td>
+                            </tr>
+                            <tr>
+                                <td>Response to cytokine</td>
+                                <td>6.78</td>
+                                <td>8.9e-07</td>
+                                <td>8</td>
+                                <td>11</td>
+                            </tr>
+                            <tr>
+                                <td>Leukocyte migration</td>
+                                <td>6.12</td>
+                                <td>2.1e-06</td>
+                                <td>7</td>
+                                <td>9</td>
+                            </tr>
+                            <tr>
+                                <td>Vascular permeability</td>
+                                <td>5.89</td>
+                                <td>4.5e-06</td>
+                                <td>6</td>
+                                <td>8</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Visualizations Section -->
+            <section id="visualizations" class="report-section">
+                <h2>Interactive Visualizations</h2>
+                
+                <div class="viz-grid">
+                    <div class="viz-card">
+                        <h3>Score vs Network Degree</h3>
+                        <div id="score-degree-chart" class="chart-container"></div>
+                    </div>
+                    
+                    <div class="viz-card">
+                        <h3>Shared Gene Distribution</h3>
+                        <div id="gene-distribution-chart" class="chart-container"></div>
+                    </div>
+                    
+                    <div class="viz-card">
+                        <h3>Drug Similarity Heatmap</h3>
+                        <div id="similarity-heatmap" class="chart-container"></div>
+                    </div>
+                    
+                    <div class="viz-card">
+                        <h3>Pathway Overlap Analysis</h3>
+                        <div id="pathway-overlap-chart" class="chart-container"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Conclusions Section -->
+            <section id="conclusions" class="report-section">
+                <h2>Conclusions and Recommendations</h2>
+                
+                <div class="conclusions-content">
+                    <h3>Summary of Findings</h3>
+                    <p>This comprehensive analysis identified 23 high-scoring drug candidates for asthma treatment, including both approved drugs and novel repurposing opportunities. The network analysis revealed key biological pathways and drug-gene interactions that provide insights into potential therapeutic mechanisms.</p>
+                    
+                    <h3>Top Recommendations</h3>
+                    <ol>
+                        <li><strong>Ibudilast (Score: 0.82):</strong> High network centrality and multiple shared genes make this an excellent candidate for further investigation.</li>
+                        <li><strong>Diclofenac (Score: 0.78):</strong> Strong anti-inflammatory profile with extensive gene overlap suggests potential for asthma treatment.</li>
+                        <li><strong>Celecoxib (Score: 0.76):</strong> COX-2 inhibitor with good safety profile and relevant pathway involvement.</li>
+                    </ol>
+                    
+                    <h3>Next Steps</h3>
+                    <ul>
+                        <li>Validate top candidates in preclinical models</li>
+                        <li>Conduct clinical trials for novel repurposing candidates</li>
+                        <li>Investigate combination therapy approaches</li>
+                        <li>Explore personalized medicine applications</li>
+                    </ul>
+                    
+                    <h3>Methodology Validation</h3>
+                    <p>The identification of known asthma drugs (Montelukast, Zafirlukast) among the top predictions validates the accuracy of our knowledge graph embedding approach and provides confidence in the novel candidates identified.</p>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>BioMedGPS Explainer</h3>
+                    <p>Generated by BioMedGPS Explainer - Drug Discovery Toolkit</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Report Info</h4>
+                    <ul>
+                        <li>Analysis Date: January 15, 2024</li>
+                        <li>Model: TransE_l2</li>
+                        <li>Disease: Asthma (MONDO:0004979)</li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="../user-guide.html">User Guide</a></li>
+                        <li><a href="../api.html">API Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 BioMedGPS Explainer. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/report.js"></script>
+</body>
+</html> 

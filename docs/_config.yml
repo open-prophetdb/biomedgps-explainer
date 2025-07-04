@@ -1,0 +1,216 @@
+# GitHub Pages Configuration
+# This file configures the GitHub Pages site for BioMedGPS Explainer
+
+# Site settings
+title: BioMedGPS Explainer
+description: A comprehensive network medicine-based drug repurposing and visualization toolkit for biomedical research
+url: "https://your-username.github.io/biomedgps-explainer"
+baseurl: "/biomedgps-explainer"
+
+# Author information
+author:
+  name: BioMedGPS Team
+  email: contact@biomedgps.org
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+permalink: pretty
+
+# Collections
+collections:
+  docs:
+    output: true
+    permalink: /:collection/:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "docs"
+    values:
+      layout: "default"
+
+# Plugins
+plugins:
+  - jekyll-seo-tag
+  - jekyll-sitemap
+
+# Exclude from processing
+exclude:
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor/bundle/
+  - vendor/cache/
+  - vendor/gems/
+  - vendor/ruby/
+
+# Include files
+include:
+  - _pages
+  - assets
+  - examples
+
+# SEO settings
+seo:
+  title: BioMedGPS Explainer - Drug Discovery Toolkit
+  description: A comprehensive network medicine-based drug repurposing and visualization toolkit for biomedical research
+  keywords: drug discovery, network medicine, knowledge graph, bioinformatics, drug repurposing
+  author: BioMedGPS Team
+  image: /assets/images/og-image.png
+  twitter:
+    card: summary_large_image
+    site: biomedgps
+  facebook:
+    app_id: your-facebook-app-id
+
+# Navigation
+nav:
+  - title: Home
+    url: /
+  - title: User Guide
+    url: /user-guide.html
+  - title: API
+    url: /api.html
+  - title: Examples
+    url: /examples.html
+  - title: Model Usage
+    url: /model-usage.html
+
+# Footer links
+footer:
+  links:
+    - title: Documentation
+      links:
+        - label: User Guide
+          url: /user-guide.html
+        - label: API Reference
+          url: /api.html
+        - label: Model Usage
+          url: /model-usage.html
+    - title: Resources
+      links:
+        - label: Examples
+          url: /examples.html
+        - label: GitHub
+          url: https://github.com/your-repo/biomedgps-explainer
+        - label: Issues
+          url: https://github.com/your-repo/biomedgps-explainer/issues
+    - title: Community
+      links:
+        - label: Discussions
+          url: https://github.com/your-repo/biomedgps-explainer/discussions
+        - label: Contributing
+          url: https://github.com/your-repo/biomedgps-explainer/blob/main/CONTRIBUTING.md
+
+# Analytics (optional)
+google_analytics: your-google-analytics-id
+
+# Comments (optional)
+disqus:
+  shortname: your-disqus-shortname
+
+# Social media
+social:
+  github: your-repo/biomedgps-explainer
+  twitter: biomedgps
+  email: contact@biomedgps.org
+
+# Theme settings
+theme:
+  name: null
+  color_scheme: light
+
+# Search
+search:
+  heading: Search Documentation
+  placeholder: Search docs...
+  preview_words_before: 5
+  preview_words_after: 10
+  preview_max_words: 50
+  tokenizer_separator: /[\s/]+/
+  rel_url: true
+  button:
+    label: Search
+    icon: search
+
+# Back to top button
+back_to_top:
+  label: Back to top
+  icon: arrow-up
+
+# Edit on GitHub
+edit_on_github:
+  repository: your-repo/biomedgps-explainer
+  branch: main
+  path: docs/
+
+# Last modified date
+last_modified_at: true
+
+# Reading time
+reading_time: true
+
+# Table of contents
+toc:
+  title: On this page
+  min_level: 1
+  max_level: 6
+
+# Related posts
+related_posts:
+  threshold: 3
+  max_related: 5
+
+# Pagination
+paginate: 10
+paginate_path: "/page/:num/"
+
+# Feed
+feed:
+  path: feed.xml
+  limit: 10
+
+# Sitemap
+sitemap:
+  path: sitemap.xml
+  lastmod: true
+  changefreq: weekly
+  priority: 0.5
+
+# Robots
+robots:
+  user_agent: "*"
+  disallow:
+    - /admin/
+    - /private/
+
+# Head and footer includes
+head_includes:
+  - <link rel="icon" type="image/x-icon" href="/assets/images/favicon.ico">
+  - <meta name="theme-color" content="#2563eb">
+  - <meta name="apple-mobile-web-app-capable" content="yes">
+  - <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+footer_includes:
+  - <script src="/assets/js/analytics.js"></script>
+
+# Development settings
+development:
+  url: "http://localhost:4000"
+  baseurl: ""
+
+# Production settings
+production:
+  url: "https://your-username.github.io"
+  baseurl: "/biomedgps-explainer"
+
+# Environment-specific settings
+environments:
+  development:
+    url: "http://localhost:4000"
+    baseurl: ""
+  production:
+    url: "https://your-username.github.io"
+    baseurl: "/biomedgps-explainer" 
