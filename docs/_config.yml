@@ -113,9 +113,9 @@ disqus:
 
 # Social media
 social:
-  github: your-repo/biomedgps-explainer
+  github: open-prophetdb/biomedgps-explainer
   twitter: biomedgps
-  email: contact@biomedgps.org
+  email: yjcyxky@163.com
 
 # Theme settings
 theme:
@@ -142,7 +142,7 @@ back_to_top:
 
 # Edit on GitHub
 edit_on_github:
-  repository: your-repo/biomedgps-explainer
+  repository: open-prophetdb/biomedgps-explainer
   branch: main
   path: docs/
 
