@@ -56,7 +56,7 @@
                             <li><a href="#introduction">Introduction</a></li>
                             <li><a href="#installation">Installation</a></li>
                             <li><a href="#getting-started">Getting Started</a></li>
-                            <li><a href="#data-preparation">Data Preparation</a></li>
+                            <li><a href="#model-preparation">Model Preparation</a></li>
                             <li><a href="#basic-usage">Basic Usage</a></li>
                             <li><a href="#advanced-features">Advanced Features</a></li>
                             <li><a href="#visualization-guide">Visualization Guide</a></li>
@@ -131,30 +131,22 @@ source biomedgps_env/bin/activate</code></pre>
                         <h3>Quick Start Example</h3>
                         
                         <div class="step-box">
-                            <h4>1. Prepare Data Directory</h4>
-                            <pre><code>mkdir -p data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/</code></pre>
+                            <h4>1. Model Preparation</h4>
+                            <p>The toolkit automatically downloads pre-trained BioMedGPS model files from Weights & Biases (wandb) when you run the analysis. No manual model file preparation is required!</p>
                         </div>
 
                         <div class="step-box">
-                            <h4>2. Add Your Model Files</h4>
-                            <ul>
-                                <li>Place your BioMedGPS model files in the data directory</li>
-                                <li>Supports both ZIP and uncompressed TSV formats</li>
-                            </ul>
-                        </div>
-
-                        <div class="step-box">
-                            <h4>3. Validate Data</h4>
+                            <h4>2. Validate Data (Optional)</h4>
                             <pre><code>python3 examples/run_data_validation.py</code></pre>
                         </div>
 
                         <div class="step-box">
-                            <h4>4. Run Complete Analysis</h4>
+                            <h4>3. Run Complete Analysis</h4>
                             <pre><code>python3 examples/run_full_example.py</code></pre>
                         </div>
 
                         <div class="step-box">
-                            <h4>5. View Results</h4>
+                            <h4>4. View Results</h4>
                             <ul>
                                 <li>Check the <code>results/</code> directory for output files</li>
                                 <li>Open <code>results/visualization_report/analysis_report.html</code> for the interactive report</li>
@@ -162,11 +154,11 @@ source biomedgps_env/bin/activate</code></pre>
                         </div>
                     </section>
 
-                    <section id="data-preparation">
-                        <h2>Data Preparation</h2>
+                    <section id="model-preparation">
+                        <h2>Model Preparation</h2>
                         
-                        <h3>Required Files</h3>
-                        <p>The toolkit requires four main data files:</p>
+                        <h3>Automatic Model Download</h3>
+                        <p>The toolkit automatically downloads pre-trained BioMedGPS model files from Weights & Biases (wandb) when you run the analysis. This includes:</p>
                         <ol>
                             <li><strong>annotated_entities.tsv</strong> - Entity annotations</li>
                             <li><strong>knowledge_graph.tsv</strong> - Knowledge graph triples</li>
@@ -174,7 +166,8 @@ source biomedgps_env/bin/activate</code></pre>
                             <li><strong>relation_type_embeddings.tsv</strong> - Relation embeddings</li>
                         </ol>
 
-                        <h3>File Formats</h3>
+                        <h3>File Formats (Reference)</h3>
+                        <p>The downloaded model files follow these formats:</p>
                         
                         <div class="format-box">
                             <h4>Entity File Format</h4>
@@ -195,8 +188,8 @@ CHEBI:12345  Compound  aspirin  MONDO:0004979  Disease  asthma  GNBR::T::Compoun
 MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...</code></pre>
                         </div>
 
-                        <h3>Data Validation</h3>
-                        <p>Always validate your data before running analysis:</p>
+                        <h3>Data Validation (Optional)</h3>
+                        <p>You can optionally validate the downloaded data:</p>
                         <pre><code>python3 examples/run_data_validation.py</code></pre>
                         <p>This will:</p>
                         <ul>
@@ -214,7 +207,7 @@ MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...</code></pre>
                         
                         <div class="usage-box">
                             <h4>1. Run Complete Analysis</h4>
-                            <pre><code>biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/</code></pre>
+                            <pre><code>biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/ --model-run-id 6vlvgvfq</code></pre>
                             <p><strong>Parameters:</strong></p>
                             <ul>
                                 <li><code>--disease-id</code>: Disease ID (required)</li>
@@ -248,6 +241,7 @@ MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...</code></pre>
                             <h4>4. Run Complete Pipeline</h4>
                             <pre><code>biomedgps-explainer pipeline \
   --disease-id MONDO:0004979 \
+  --model-run-id 6vlvgvfq \
   --output-dir results/ \
   --filter-expression "score > 0.6 and existing == False"</code></pre>
                             <p><strong>Description:</strong> Executes the complete workflow (run → filter → visualize) in a single command.</p>
@@ -387,7 +381,7 @@ visualizer.generate_report(
                                 <li>Check file permissions</li>
                             </ul>
                         </div>
-
+                        
                         <div class="troubleshoot-box">
                             <h4>Import Errors</h4>
                             <p><strong>Symptoms:</strong> ModuleNotFoundError or ImportError</p>
@@ -399,7 +393,7 @@ visualizer.generate_report(
                             </ul>
                         </div>
                     </section>
-
+                    <!--
                     <section id="best-practices">
                         <h2>Best Practices</h2>
                         
@@ -427,6 +421,7 @@ visualizer.generate_report(
                             <li>Keep detailed logs of your analysis process</li>
                         </ul>
                     </section>
+                    -->
 
                     <section id="faq">
                         <h2>FAQ</h2>
@@ -482,7 +477,7 @@ visualizer.generate_report(
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="model-usage.html">Model Usage</a></li>
-                        <li><a href="data-preparation.html">Data Preparation</a></li>
+                        <li><a href="model-usage.html">Model Usage</a></li>
                         <li><a href="troubleshooting.html">Troubleshooting</a></li>
                     </ul>
                 </div>

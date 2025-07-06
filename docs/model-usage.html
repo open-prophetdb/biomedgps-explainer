@@ -54,6 +54,7 @@
                         <h3>Model Guide</h3>
                         <ul>
                             <li><a href="#overview">Overview</a></li>
+                            <li><a href="#model-setup">Model Setup</a></li>
                             <li><a href="#model-types">Model Types</a></li>
                             <li><a href="#data-format">Data Format</a></li>
                             <li><a href="#model-selection">Model Selection</a></li>
@@ -73,6 +74,47 @@
                         <div class="info-box">
                             <h3>What are Knowledge Graph Embeddings?</h3>
                             <p>Knowledge Graph Embeddings represent entities (drugs, diseases, genes) and relationships as vectors in a continuous space. This allows the model to learn complex patterns and make predictions about potential associations between drugs and diseases.</p>
+                        </div>
+                    </section>
+
+                    <section id="model-setup">
+                        <h2>Model Setup</h2>
+                        
+                        <h3>Automatic Model Download</h3>
+                        <p>BioMedGPS Explainer automatically downloads pre-trained model files and configuration from Weights & Biases (wandb) when you run the analysis. No manual setup is required!</p>
+                        
+                        <div class="info-box">
+                            <h3>What's Downloaded Automatically?</h3>
+                            <p>The toolkit automatically retrieves:</p>
+                            <ul>
+                                <li><strong>Pre-trained KGE model</strong> and embeddings</li>
+                                <li><strong>Model configuration</strong> (config.json) with optimal parameters</li>
+                                <li><strong>Entity annotations</strong> and embeddings</li>
+                                <li><strong>Knowledge graph</strong> data</li>
+                                <li><strong>Relation embeddings</strong></li>
+                            </ul>
+                        </div>
+
+                        <h3>Model Selection</h3>
+                        <p>You can choose different pre-trained models using the <code>--model-run-id</code> parameter, which corresponds to run IDs from the <a href="https://wandb.ai/yjcyxky/biomedgps-kge-v1" target="_blank">wandb project</a>.</p>
+                        
+                        <div class="code-example">
+                            <h4>Using Different Models</h4>
+                            <pre><code># CLI usage with specific model run ID
+biomedgps-explainer run --disease-id MONDO:0004979 --model-run-id 6vlvgvfq --output-dir results/
+
+# Python API usage with specific model run ID
+core = DrugDiseaseCore()
+core.run_full_pipeline(
+    disease_id="MONDO:0004979",
+    model_run_id="6vlvgvfq",  # specify wandb run ID
+    output_dir="results/"
+)</code></pre>
+                        </div>
+
+                        <div class="info-box">
+                            <h3>Finding Model Run IDs</h3>
+                            <p>Browse available pre-trained models at <a href="https://wandb.ai/yjcyxky/biomedgps-kge-v1" target="_blank">wandb.ai/yjcyxky/biomedgps-kge-v1</a> to find different model run IDs. Each run represents a different model configuration or training setup.</p>
                         </div>
                     </section>
 

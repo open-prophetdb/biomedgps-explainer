@@ -60,24 +60,9 @@ The package will automatically install all required dependencies:
 
 ## Quick Start
 
-### 1. Data Preparation
+### 1. Model Preparation
 
-First, prepare your BioMedGPS model files. The toolkit supports both ZIP and uncompressed formats:
-
-```bash
-# Create the data directory
-mkdir -p data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-
-# Option 1: Place ZIP files (recommended)
-# The toolkit will automatically decompress them
-cp your_model_files.zip data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-
-# Option 2: Place uncompressed TSV files
-cp annotated_entities.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-cp knowledge_graph.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-cp entity_embeddings.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-cp relation_type_embeddings.tsv data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-```
+The toolkit automatically downloads pre-trained BioMedGPS model files from Weights & Biases (wandb) when you run the analysis. No manual model file preparation is required!
 
 ### 2. Validate Data Files
 

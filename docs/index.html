@@ -137,9 +137,10 @@ pip install -e .</code></pre>
                     <div class="step">
                         <div class="step-number">2</div>
                         <div class="step-content">
-                            <h3>Prepare Data</h3>
-                            <pre><code>mkdir -p data/biomedgps_v2_20250318_TransE_l2_KMkgBhIV/
-# Add your model files (ZIP or TSV format)</code></pre>
+                            <h3>Model Setup</h3>
+                            <p>Models are automatically downloaded from Weights & Biases (wandb). Browse available models at <a href="https://wandb.ai/yjcyxky/biomedgps-kge-v1" target="_blank">wandb.ai/yjcyxky/biomedgps-kge-v1</a> to find different model run IDs.</p>
+                            <pre><code># No manual preparation required!
+# Use --model-run-id to specify which model to download</code></pre>
                         </div>
                     </div>
                     <div class="step">
@@ -148,7 +149,7 @@ pip install -e .</code></pre>
                             <h3>Run Analysis</h3>
                             <pre><code>python3 examples/run_full_example.py
 # Or use CLI
-biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/</code></pre>
+biomedgps-explainer run --disease-id MONDO:0004979 --model-run-id 6vlvgvfq --output-dir results/</code></pre>
                         </div>
                     </div>
                     <div class="step">
@@ -236,7 +237,6 @@ biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/</code><
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="model-usage.html">Model Usage</a></li>
-                        <li><a href="data-preparation.html">Data Preparation</a></li>
                         <li><a href="troubleshooting.html">Troubleshooting</a></li>
                     </ul>
                 </div>
