@@ -13,7 +13,7 @@ logger = init_logger()
 
 @click.group()
 def cli():
-    """drugs4disease: generate potential drug list, filter and visualize."""
+    """biomedgps-explainer: generate potential drug list, filter and visualize."""
     pass
 
 @cli.command()

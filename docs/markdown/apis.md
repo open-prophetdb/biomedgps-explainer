@@ -176,8 +176,13 @@ Class for generating comprehensive visualizations and reports.
 
 #### Constructor
 ```python
-Visualizer()
+Visualizer(disease_id: str, disease_name: str, embed_images: bool = True)
 ```
+
+**Parameters**:
+- `disease_id`: Disease identifier
+- `disease_name`: Disease name
+- `embed_images`: Whether to embed images in HTML report (default: True)
 
 #### Methods
 
@@ -211,9 +216,10 @@ create_visualization(
 - `shared_gene_count`: Shared gene count distribution
 - `score_vs_degree`: Score vs degree relationship
 - `shared_gene_count_vs_score`: Shared gene count vs score scatter plot
-- `shared_pathways`: Shared pathways distribution
+- `overlap_pathways`: Overlapping pathways distribution
 - `key_genes_distribution`: Key genes distribution
 - `existing_vs_predicted`: Known vs predicted drugs ratio
+- `prompt`: Prompt generation for AI research
 
 ##### generate_report()
 ```python
@@ -355,44 +361,56 @@ extract_model_files_if_needed(model_dir: str) -> bool
 
 #### run
 ```bash
-drugs4disease run --disease MONDO:0004979 --output-dir results/
+biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/
 ```
 
 **Options**:
-- `--disease`: Disease ID (required)
-- `--entity-file`: Entity file path (optional)
-- `--knowledge-graph`: Knowledge graph file path (optional)
-- `--entity-embeddings`: Entity embeddings file path (optional)
-- `--relation-embeddings`: Relation embeddings file path (optional)
+- `--disease-id`: Disease ID (required)
+- `--model-run-id`: Model run ID (default: 6vlvgvfq)
 - `--output-dir`: Output directory (required)
-- `--model`: KGE model type (default: TransE_l2)
 - `--top-n-diseases`: Number of similar diseases (default: 100)
-- `--gamma`: Gamma parameter (default: 12.0)
 - `--threshold`: Drug filtering threshold (default: 0.5)
-- `--relation-type`: Relation type (default: DGIDB::OTHER::Gene:Compound)
+- `--relation-type`: Relation type (default: GNBR::T::Compound:Disease)
 - `--top-n-drugs`: Number of drugs to analyze (default: 1000)
 
 #### filter
 ```bash
-drugs4disease filter --input-file results/annotated_drugs.xlsx --expression "score > 0.6" --output-file results/filtered_drugs.xlsx
+biomedgps-explainer filter --input-file results/annotated_drugs.xlsx --expression "score > 0.6" --output-file results/filtered_drugs.xlsx
 ```
 
 **Options**:
 - `--input-file`: Input Excel file (required)
 - `--expression`: Filter expression (required)
 - `--output-file`: Output Excel file (required)
-- `--sheet-names`: Sheet names as "input_sheet,output_sheet" (optional)
 
 #### visualize
 ```bash
-drugs4disease visualize --input-file results/annotated_drugs.xlsx --output-dir results/visualizations/
+biomedgps-explainer visualize --input-file results/annotated_drugs.xlsx --output-dir results/visualizations/ --disease-id MONDO:0004979 --disease-name "asthma"
 ```
 
 **Options**:
 - `--input-file`: Input Excel file (required)
 - `--output-dir`: Output directory (required)
-- `--chart-types`: Comma-separated list of chart types (optional)
-- `--title`: Report title (optional)
+- `--viz-type`: Visualization type (default: all)
+- `--disease-id`: Disease ID (required)
+- `--disease-name`: Disease name (required)
+
+#### pipeline
+```bash
+biomedgps-explainer pipeline --disease-id MONDO:0004979 --output-dir results/ --filter-expression "score > 0.6 and existing == False"
+```
+
+**Description**: Execute complete workflow (run → filter → visualize) in a single command.
+
+**Options**:
+- `--disease-id`: Disease ID (required)
+- `--model-run-id`: Model run ID (default: 6vlvgvfq)
+- `--filter-expression`: Filter expression (optional)
+- `--output-dir`: Output directory (default: results)
+- `--top-n-diseases`: Number of similar diseases (default: 100)
+- `--threshold`: Drug filtering threshold (default: 0.5)
+- `--relation-type`: Relation type (default: GNBR::T::Compound:Disease)
+- `--top-n-drugs`: Number of drugs to interpret (default: 100)
 
 ## Data Structures
 

@@ -158,7 +158,7 @@ from drugs4disease.visualizer import Visualizer
 # Initialize components
 core = DrugDiseaseCore()
 filter_tool = DrugFilter()
-visualizer = Visualizer()
+visualizer = Visualizer(disease_id="MONDO:0004979", disease_name="asthma")
 
 # Run complete analysis
 core.run_full_pipeline(

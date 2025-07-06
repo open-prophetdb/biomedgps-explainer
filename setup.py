@@ -20,7 +20,10 @@ setup(
         'openpyxl>=3.0.0',
         'requests>=2.25.0',
         'scikit-learn>=1.0.0',
+        'plotly>=5.0.0',
         'wandb>=0.15.0',
+        'jinja2>=3.0.0',
+        'tqdm>=4.0.0',
     ],
     entry_points={
         'console_scripts': [

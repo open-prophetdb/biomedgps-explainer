@@ -257,7 +257,14 @@ filter.filter_drugs(
                         
                         <div class="code-example">
                             <h4>Constructor</h4>
-                            <pre><code>Visualizer()</code></pre>
+                            <pre><code>Visualizer(disease_id: str, disease_name: str, embed_images: bool = True)</code></pre>
+                            
+                            <p><strong>Parameters:</strong></p>
+                            <ul>
+                                <li><code>disease_id</code>: Disease identifier</li>
+                                <li><code>disease_name</code>: Disease name</li>
+                                <li><code>embed_images</code>: Whether to embed images in HTML report (default: True)</li>
+                            </ul>
                         </div>
 
                         <div class="method-box">
@@ -321,23 +328,23 @@ filter.filter_drugs(
                         
                         <div class="usage-box">
                             <h4>Run Analysis</h4>
-                            <pre><code>drugs4disease run [OPTIONS]</code></pre>
+                            <pre><code>biomedgps-explainer run [OPTIONS]</code></pre>
                             
                             <h5>Options:</h5>
                             <ul>
-                                <li><code>--disease</code>: Disease ID (required)</li>
+                                <li><code>--disease-id</code>: Disease ID (required)</li>
                                 <li><code>--output-dir</code>: Output directory (required)</li>
-                                <li><code>--model</code>: KGE model type (default: TransE_l2)</li>
+                                <li><code>--model-run-id</code>: Model run ID (default: 6vlvgvfq)</li>
                                 <li><code>--top-n-diseases</code>: Number of similar diseases (default: 100)</li>
-                                <li><code>--gamma</code>: Margin parameter (default: 12.0)</li>
                                 <li><code>--threshold</code>: Drug filtering threshold (default: 0.5)</li>
+                                <li><code>--relation-type</code>: Relation type (default: GNBR::T::Compound:Disease)</li>
                                 <li><code>--top-n-drugs</code>: Number of drugs to analyze (default: 1000)</li>
                             </ul>
                         </div>
 
                         <div class="usage-box">
                             <h4>Filter Drugs</h4>
-                            <pre><code>drugs4disease filter [OPTIONS]</code></pre>
+                            <pre><code>biomedgps-explainer filter [OPTIONS]</code></pre>
                             
                             <h5>Options:</h5>
                             <ul>
@@ -349,13 +356,34 @@ filter.filter_drugs(
 
                         <div class="usage-box">
                             <h4>Generate Visualizations</h4>
-                            <pre><code>drugs4disease visualize [OPTIONS]</code></pre>
+                            <pre><code>biomedgps-explainer visualize [OPTIONS]</code></pre>
                             
                             <h5>Options:</h5>
                             <ul>
                                 <li><code>--input-file</code>: Input Excel file (required)</li>
                                 <li><code>--output-dir</code>: Output directory (required)</li>
-                                <li><code>--title</code>: Report title (optional)</li>
+                                <li><code>--viz-type</code>: Visualization type (default: all)</li>
+                                <li><code>--disease-id</code>: Disease ID (required)</li>
+                                <li><code>--disease-name</code>: Disease name (required)</li>
+                            </ul>
+                        </div>
+
+                        <div class="usage-box">
+                            <h4>Run Complete Pipeline</h4>
+                            <pre><code>biomedgps-explainer pipeline [OPTIONS]</code></pre>
+                            
+                            <p><strong>Description:</strong> Execute complete workflow (run → filter → visualize) in a single command.</p>
+                            
+                            <h5>Options:</h5>
+                            <ul>
+                                <li><code>--disease-id</code>: Disease ID (required)</li>
+                                <li><code>--model-run-id</code>: Model run ID (default: 6vlvgvfq)</li>
+                                <li><code>--filter-expression</code>: Filter expression (optional)</li>
+                                <li><code>--output-dir</code>: Output directory (default: results)</li>
+                                <li><code>--top-n-diseases</code>: Number of similar diseases (default: 100)</li>
+                                <li><code>--threshold</code>: Drug filtering threshold (default: 0.5)</li>
+                                <li><code>--relation-type</code>: Relation type (default: GNBR::T::Compound:Disease)</li>
+                                <li><code>--top-n-drugs</code>: Number of drugs to interpret (default: 100)</li>
                             </ul>
                         </div>
                     </section>

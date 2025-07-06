@@ -18,12 +18,11 @@
                 <span>BioMedGPS Explainer</span>
             </div>
             <ul class="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#features" class="nav-link">Features</a></li>
-                <li><a href="#quick-start" class="nav-link">Quick Start</a></li>
+                <li><a href="index.html" class="nav-link active">Home</a></li>
                 <li><a href="user-guide.html" class="nav-link">User Guide</a></li>
                 <li><a href="api.html" class="nav-link">API</a></li>
                 <li><a href="examples.html" class="nav-link">Examples</a></li>
+                <li><a href="model-usage.html" class="nav-link">Model Usage</a></li>
                 <li><a href="https://github.com/open-prophetdb/biomedgps-explainer" class="nav-link" target="_blank">
                     <i class="fab fa-github"></i> GitHub
                 </a></li>
@@ -149,7 +148,7 @@ pip install -e .</code></pre>
                             <h3>Run Analysis</h3>
                             <pre><code>python3 examples/run_full_example.py
 # Or use CLI
-drugs4disease run --disease MONDO:0004979 --output-dir results/</code></pre>
+biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/</code></pre>
                         </div>
                     </div>
                     <div class="step">

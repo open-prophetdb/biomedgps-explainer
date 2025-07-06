@@ -121,7 +121,7 @@ source biomedgps_env/bin/activate</code></pre>
 
                         <div class="step-box">
                             <h4>4. Verify Installation</h4>
-                            <pre><code>drugs4disease --help</code></pre>
+                            <pre><code>biomedgps-explainer --help</code></pre>
                         </div>
                     </section>
 
@@ -214,21 +214,22 @@ MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...</code></pre>
                         
                         <div class="usage-box">
                             <h4>1. Run Complete Analysis</h4>
-                            <pre><code>drugs4disease run --disease MONDO:0004979 --output-dir results/</code></pre>
+                            <pre><code>biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/</code></pre>
                             <p><strong>Parameters:</strong></p>
                             <ul>
-                                <li><code>--disease</code>: Disease ID (required)</li>
+                                <li><code>--disease-id</code>: Disease ID (required)</li>
                                 <li><code>--output-dir</code>: Output directory (required)</li>
-                                <li><code>--model</code>: KGE model type (default: TransE_l2)</li>
+                                <li><code>--model-run-id</code>: Model run ID (default: 6vlvgvfq)</li>
                                 <li><code>--top-n-diseases</code>: Number of similar diseases (default: 100)</li>
-                                <li><code>--gamma</code>: Margin parameter (default: 12.0)</li>
                                 <li><code>--threshold</code>: Drug filtering threshold (default: 0.5)</li>
+                                <li><code>--relation-type</code>: Relation type (default: GNBR::T::Compound:Disease)</li>
+                                <li><code>--top-n-drugs</code>: Number of drugs to interpret (default: 1000)</li>
                             </ul>
                         </div>
 
                         <div class="usage-box">
                             <h4>2. Filter Results</h4>
-                            <pre><code>drugs4disease filter \
+                            <pre><code>biomedgps-explainer filter \
   --input-file results/annotated_drugs.xlsx \
   --expression "score > 0.6 and existing == False" \
   --output-file results/filtered_drugs.xlsx</code></pre>
@@ -236,9 +237,20 @@ MONDO:0004979  Disease  0.1|0.2|0.3|0.4|...</code></pre>
 
                         <div class="usage-box">
                             <h4>3. Generate Visualizations</h4>
-                            <pre><code>drugs4disease visualize \
+                            <pre><code>biomedgps-explainer visualize \
   --input-file results/filtered_drugs.xlsx \
-  --output-dir results/visualizations/</code></pre>
+  --output-dir results/visualizations/ \
+  --disease-id MONDO:0004979 \
+  --disease-name "asthma"</code></pre>
+                        </div>
+
+                        <div class="usage-box">
+                            <h4>4. Run Complete Pipeline</h4>
+                            <pre><code>biomedgps-explainer pipeline \
+  --disease-id MONDO:0004979 \
+  --output-dir results/ \
+  --filter-expression "score > 0.6 and existing == False"</code></pre>
+                            <p><strong>Description:</strong> Executes the complete workflow (run → filter → visualize) in a single command.</p>
                         </div>
 
                         <h3>Python API</h3>
@@ -252,7 +264,7 @@ from drugs4disease.visualizer import Visualizer
 # Initialize components
 core = DrugDiseaseCore()
 filter_tool = DrugFilter()
-visualizer = Visualizer()
+visualizer = Visualizer(disease_id="MONDO:0004979", disease_name="asthma")
 
 # Run analysis
 core.run_full_pipeline(

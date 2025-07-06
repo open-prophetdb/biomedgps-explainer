@@ -95,15 +95,27 @@ python3 examples/run_full_example.py
 
 ### 4. Use Command Line Interface
 
+The toolkit provides several CLI commands for different workflows:
+
+#### Available Commands
+
+- **`run`** - Execute drug discovery analysis only
+- **`filter`** - Filter existing results based on criteria
+- **`visualize`** - Generate charts and reports from results
+- **`pipeline`** - Execute complete workflow (run → filter → visualize)
+
 ```bash
 # Run analysis with custom parameters
-drugs4disease run --disease MONDO:0004979 --output-dir results/
+biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/
 
 # Generate visualizations
-drugs4disease visualize --input-file results/annotated_drugs.xlsx --output-dir results/visualizations/
+biomedgps-explainer visualize --input-file results/annotated_drugs.xlsx --output-dir results/visualizations/ --disease-id MONDO:0004979 --disease-name "asthma"
 
 # Filter drugs
-drugs4disease filter --input-file results/annotated_drugs.xlsx --expression "score > 0.6 and existing == False"
+biomedgps-explainer filter --input-file results/annotated_drugs.xlsx --expression "score > 0.6 and existing == False" --output-file results/filtered_drugs.xlsx
+
+# Run full pipeline (run → filter → visualize)
+biomedgps-explainer pipeline --disease-id MONDO:0004979 --output-dir results/ --filter-expression "score > 0.6 and existing == False"
 ```
 
 ## Usage Examples
@@ -118,7 +130,7 @@ from drugs4disease.visualizer import Visualizer
 # Initialize components
 core = DrugDiseaseCore()
 drug_filter = DrugFilter()
-visualizer = Visualizer()
+visualizer = Visualizer(disease_id="MONDO:0004979", disease_name="asthma")
 
 # Run complete analysis pipeline
 core.run_full_pipeline(
@@ -274,10 +286,11 @@ The filtering system supports:
 
 ```bash
 # Check CLI help
-drugs4disease --help
-drugs4disease run --help
-drugs4disease filter --help
-drugs4disease visualize --help
+biomedgps-explainer --help
+biomedgps-explainer run --help
+biomedgps-explainer filter --help
+biomedgps-explainer visualize --help
+biomedgps-explainer pipeline --help
 ```
 
 ## Contributing

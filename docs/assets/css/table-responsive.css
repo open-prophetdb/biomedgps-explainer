@@ -113,24 +113,41 @@ tr:hover {
 }
 
 @media (max-width: 480px) {
+    .table-responsive {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        max-width: calc(100vw - 16px);
+    }
+    
     .table-responsive table {
-        min-width: 400px;
+        min-width: 350px;
         font-size: 0.8rem;
+        width: auto;
     }
     
     th, td {
         padding: 0.5rem 0.25rem;
+        white-space: nowrap;
+        min-width: 80px;
+    }
+    
+    .table-stack {
+        overflow-x: visible;
+        max-width: 100%;
     }
     
     .table-stack td {
         padding: 0.5rem;
         padding-left: 40%;
+        white-space: normal;
+        min-width: auto;
     }
     
     .table-stack td:before {
         left: 0.5rem;
         width: 35%;
         font-size: 0.75rem;
+        white-space: normal;
     }
 }
 

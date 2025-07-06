@@ -61,7 +61,7 @@ BioMedGPS Explainer is a comprehensive toolkit for drug discovery analysis using
 
 4. **Verify Installation**
    ```bash
-   drugs4disease --help
+   biomedgps-explainer --help
    ```
 
 ## Getting Started
@@ -143,20 +143,21 @@ This will:
 
 #### 1. Run Complete Analysis
 ```bash
-drugs4disease run --disease MONDO:0004979 --output-dir results/
+biomedgps-explainer run --disease-id MONDO:0004979 --output-dir results/
 ```
 
 **Parameters**:
-- `--disease`: Disease ID (required)
+- `--disease-id`: Disease ID (required)
 - `--output-dir`: Output directory (required)
-- `--model`: KGE model type (default: TransE_l2)
+- `--model-run-id`: Model run ID (default: 6vlvgvfq)
 - `--top-n-diseases`: Number of similar diseases (default: 100)
-- `--gamma`: Margin parameter (default: 12.0)
 - `--threshold`: Drug filtering threshold (default: 0.5)
+- `--relation-type`: Relation type (default: GNBR::T::Compound:Disease)
+- `--top-n-drugs`: Number of drugs to interpret (default: 1000)
 
 #### 2. Filter Results
 ```bash
-drugs4disease filter \
+biomedgps-explainer filter \
   --input-file results/annotated_drugs.xlsx \
   --expression "score > 0.6 and existing == False" \
   --output-file results/filtered_drugs.xlsx
@@ -164,10 +165,31 @@ drugs4disease filter \
 
 #### 3. Generate Visualizations
 ```bash
-drugs4disease visualize \
+biomedgps-explainer visualize \
   --input-file results/filtered_drugs.xlsx \
-  --output-dir results/visualizations/
+  --output-dir results/visualizations/ \
+  --disease-id MONDO:0004979 \
+  --disease-name "asthma"
 ```
+
+#### 4. Run Complete Pipeline
+```bash
+biomedgps-explainer pipeline \
+  --disease-id MONDO:0004979 \
+  --output-dir results/ \
+  --filter-expression "score > 0.6 and existing == False"
+```
+
+**Description**: Executes the complete workflow (run → filter → visualize) in a single command.
+
+**Key Parameters**:
+- `--disease-id`: Disease ID (required)
+- `--output-dir`: Output directory (default: results)
+- `--filter-expression`: Optional filter to apply to results
+- `--model-run-id`: Model run ID (default: 6vlvgvfq)
+- `--top-n-diseases`: Number of similar diseases (default: 100)
+- `--threshold`: Drug filtering threshold (default: 0.5)
+- `--top-n-drugs`: Number of drugs to interpret (default: 100)
 
 ### Python API
 
@@ -180,7 +202,7 @@ from drugs4disease.visualizer import Visualizer
 # Initialize components
 core = DrugDiseaseCore()
 filter_tool = DrugFilter()
-visualizer = Visualizer()
+visualizer = Visualizer(disease_id="MONDO:0004979", disease_name="asthma")
 
 # Run analysis
 core.run_full_pipeline(
@@ -355,10 +377,11 @@ unzip -t your_file.zip
 
 #### Check CLI Help
 ```bash
-drugs4disease --help
-drugs4disease run --help
-drugs4disease filter --help
-drugs4disease visualize --help
+biomedgps-explainer --help
+biomedgps-explainer run --help
+biomedgps-explainer filter --help
+biomedgps-explainer visualize --help
+biomedgps-explainer pipeline --help
 ```
 
 #### Debug Mode
