@@ -6,6 +6,7 @@ Contains ZIP decompression, file path handling, etc.
 import os
 import zipfile
 import glob
+import pandas as pd
 from typing import List, Tuple, Optional
 import logging
 
@@ -255,6 +256,66 @@ def get_model_file_paths(
         )
 
 
+def _validate_tsv_file(file_path: str, required_columns: List[str], min_rows: int = 1) -> bool:
+    """
+    Validate a TSV file for format, content, and structure
+    
+    Args:
+        file_path: path to the TSV file
+        required_columns: list of required column names
+        min_rows: minimum number of rows (excluding header)
+        
+    Returns:
+        bool: whether the file is valid
+    """
+    try:
+        # Check if file is empty
+        if os.path.getsize(file_path) == 0:
+            print(f"✗ File is empty: {file_path}")
+            return False
+        
+        # Try to read the file
+        df = pd.read_csv(file_path, sep='\t', nrows=1000)  # Read first 1000 rows for validation
+        
+        # Check if file has any content
+        if len(df) == 0:
+            print(f"✗ File has no data rows: {file_path}")
+            return False
+        
+        # Check required columns
+        missing_columns = [col for col in required_columns if col not in df.columns]
+        if missing_columns:
+            print(f"✗ Missing required columns {missing_columns} in: {file_path}")
+            return False
+        
+        # Check minimum rows
+        if len(df) < min_rows:
+            print(f"✗ File has fewer than {min_rows} rows: {file_path}")
+            return False
+        
+        # Check for completely empty columns
+        empty_columns = []
+        for col in required_columns:
+            if col in df.columns and df[col].isna().all():
+                empty_columns.append(col)
+        
+        if empty_columns:
+            print(f"✗ Columns are completely empty {empty_columns} in: {file_path}")
+            return False
+        
+        return True
+        
+    except pd.errors.EmptyDataError:
+        print(f"✗ File is empty or has no valid data: {file_path}")
+        return False
+    except pd.errors.ParserError as e:
+        print(f"✗ File format error in {file_path}: {e}")
+        return False
+    except Exception as e:
+        print(f"✗ Error reading file {file_path}: {e}")
+        return False
+
+
 def validate_model_files(
     entity_file: str,
     knowledge_graph: str,
@@ -280,6 +341,7 @@ def validate_model_files(
         (relation_embeddings, "relation embeddings file")
     ]
 
+    # First check if all files exist
     for file_path, description in files_to_check:
         if not os.path.exists(file_path):
             print(f"✗ {description} does not exist: {file_path}")
@@ -287,7 +349,38 @@ def validate_model_files(
         else:
             print(f"✓ {description}: {file_path}")
 
-    return True 
+    # Now validate file content and structure
+    try:
+        # Validate entity annotation file
+        entity_columns = ['id', 'label', 'name']
+        if not _validate_tsv_file(entity_file, entity_columns, min_rows=1):
+            print(f"✗ Entity annotation file validation failed: {entity_file}")
+            return False
+        
+        # Validate knowledge graph file
+        kg_columns = ['source_id', 'source_type', 'source_name', 'target_id', 'target_type', 'target_name', 'relation_type']
+        if not _validate_tsv_file(knowledge_graph, kg_columns, min_rows=1):
+            print(f"✗ Knowledge graph file validation failed: {knowledge_graph}")
+            return False
+        
+        # Validate entity embeddings file
+        entity_emb_columns = ['embedding_id', 'entity_id', 'entity_type', 'entity_name', 'embedding']
+        if not _validate_tsv_file(entity_embeddings, entity_emb_columns, min_rows=1):
+            print(f"✗ Entity embeddings file validation failed: {entity_embeddings}")
+            return False
+        
+        # Validate relation embeddings file
+        relation_emb_columns = ['id', 'embedding']
+        if not _validate_tsv_file(relation_embeddings, relation_emb_columns, min_rows=1):
+            print(f"✗ Relation embeddings file validation failed: {relation_embeddings}")
+            return False
+        
+        print("✓ All model files are valid")
+        return True
+        
+    except Exception as e:
+        print(f"✗ Validation error: {e}")
+        return False
 
 
 def init_logger(
