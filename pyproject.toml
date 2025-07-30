@@ -1,3 +1,58 @@
 [build-system]
 requires = ["setuptools>=42", "wheel"]
-build-backend = "setuptools.build_meta" 
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "biomedgps-explainer"
+version = "0.1.0"
+description = "A tool for using NM-based model to predict drugs for a given disease"
+authors = [
+    {name = "Jingcheng Yang", email = "yjcyxky@163.com"}
+]
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+dependencies = [
+    "click>=8.0.0",
+    "pandas>=1.3.0",
+    "numpy>=1.21.0",
+    "matplotlib>=3.5.0",
+    "seaborn>=0.11.0",
+    "networkx>=2.6.0",
+    "gseapy>=0.12.0",
+    "gprofiler-official>=1.0.0",
+    "torch>=1.9.0",
+    "openpyxl>=3.0.0",
+    "requests>=2.25.0",
+    "scikit-learn>=1.0.0",
+    "plotly>=5.0.0",
+    "wandb>=0.15.0",
+    "jinja2>=3.0.0",
+    "tqdm>=4.0.0",
+    "graph-tool",
+]
+
+[project.optional-dependencies]
+plugin = ["biominer_tools>=0.1"]
+
+[project.scripts]
+biomedgps-explainer = "drugs4disease.cli:cli"
+bexplainer = "drugs4disease.cli:cli"
+
+[project.entry-points."biominer_tools.plugins"]
+biomedgps_explainer = "drugs4disease.register"
+
+[tool.setuptools]
+packages = ["drugs4disease"]
+include-package-data = true
+zip-safe = false 

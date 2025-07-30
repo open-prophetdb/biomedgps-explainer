@@ -32,7 +32,7 @@ class DrugDiseaseCore:
 
         # validate files
         if not validate_model_files(entity_file, knowledge_graph, entity_embeddings, relation_embeddings):
-            raise FileNotFoundError("模型文件验证失败")
+            raise FileNotFoundError("Model file validation failed")
 
         # 1. drug prediction
         pred_xlsx = os.path.join(output_dir, 'predicted_drugs.xlsx')
@@ -288,10 +288,11 @@ class DrugDiseaseCore:
             )
         self.logger.info("Knowledge graph file is loaded")
 
+        names = kg_df[kg_df["source_id"] == disease_id]["source_name"].to_numpy()
         known_diseases = [
             {
                 "id": disease_id,
-                "name": kg_df[kg_df["source_id"] == disease_id]["source_name"].to_numpy()[0],
+                "name": names[0] if len(names) > 0 else None,
             }
         ]
         known_df = pd.DataFrame(known_diseases)
@@ -827,7 +828,7 @@ class DrugDiseaseCore:
         # sort and deduplicate
         drugs_df.sort_values(by=["score", "num_of_shared_genes_in_path"], ascending=[False, False], inplace=True)
         drugs_df.drop_duplicates(subset=["drug_id"], inplace=True)
-        
+
         drugs_df["pvalue"] = drugs_df["pvalue"].apply(lambda x: f"{x:.3g}")
 
         self.logger.info("Save the results...")
