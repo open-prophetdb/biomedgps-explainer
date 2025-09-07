@@ -68,7 +68,5 @@ jobs:
           echo "No changes to commit"
         else
           git commit -m "Update biomedgps-explainer documentation from ${{ github.repository }}@${{ github.sha }}"
-          git push origin main
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com/open-prophetdb/biomedgps-docs.git main
         fi
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
