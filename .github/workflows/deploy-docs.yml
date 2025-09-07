@@ -1,0 +1,73 @@
+name: Deploy Documentation
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'README.md'
+      - 'README_CN.md'
+  workflow_dispatch:
+
+jobs:
+  deploy-docs:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout source repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Checkout target repository
+      uses: actions/checkout@v4
+      with:
+        repository: open-prophetdb/biomedgps-docs
+        token: ${{ secrets.GITHUB_TOKEN }}
+        path: target-repo
+
+    - name: Copy documentation files
+      run: |
+        # Create biomedgps-explainer directory if it doesn't exist
+        mkdir -p target-repo/biomedgps-explainer
+        
+        # Copy docs directory
+        if [ -d "docs" ]; then
+          cp -r docs/* target-repo/biomedgps-explainer/
+        fi
+        
+        # Copy README files
+        if [ -f "README.md" ]; then
+          cp README.md target-repo/biomedgps-explainer/
+        fi
+        
+        if [ -f "README_CN.md" ]; then
+          cp README_CN.md target-repo/biomedgps-explainer/
+        fi
+        
+        # Copy CHANGELOG if exists
+        if [ -f "CHANGELOG.md" ]; then
+          cp CHANGELOG.md target-repo/biomedgps-explainer/
+        fi
+
+    - name: Configure git
+      run: |
+        cd target-repo
+        git config --local user.email "biomedgps-explainer-action@github.com"
+        git config --local user.name "BioMedGPS Explainer Action"
+
+    - name: Commit and push changes
+      run: |
+        cd target-repo
+        git add biomedgps-explainer/
+        
+        # Check if there are changes to commit
+        if git diff --staged --quiet; then
+          echo "No changes to commit"
+        else
+          git commit -m "Update biomedgps-explainer documentation from ${{ github.repository }}@${{ github.sha }}"
+          git push origin main
+        fi
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
