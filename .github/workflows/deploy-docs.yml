@@ -8,6 +8,7 @@ on:
       - 'docs/**'
       - 'README.md'
       - 'README_CN.md'
+      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
 
 jobs:
