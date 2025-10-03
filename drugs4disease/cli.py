@@ -19,12 +19,13 @@ def cli():
 @cli.command()
 @click.option('--disease-id', required=True, help='disease id, e.g. MONDO:0004979')
 @click.option('--model-run-id', required=False, help='model run id, e.g. 6vlvgvfq. we can access `https://wandb.ai/yjcyxky/biomedgps-kge-v1?nw=nwuseryjcyxky` to get the model run id. If not specified, use the default model run id.', default='6vlvgvfq')
+@click.option('--project-id', required=False, help='project id, e.g. biomedgps-kge-v1. If not specified, use the default project id.', default='biomedgps-kge-v1')
 @click.option('--output-dir', required=True, help='output directory')
 @click.option('--top-n-diseases', default=100, help='number of similar diseases')
 @click.option('--threshold', default=0.5, help='drug filtering threshold')
 @click.option('--relation-type', default='GNBR::T::Compound:Disease', help='A relation type which means the treatment relationship between a compound and a disease.')
 @click.option('--top-n-drugs', default=1000, help='number of drugs to interpret')  # number of drugs to interpret, default 1000, if number of drugs to interpret is specified, then top_n_drugs is required
-def run(disease_id, model_run_id, output_dir, top_n_diseases, threshold, relation_type, top_n_drugs):
+def run(disease_id, model_run_id, project_id, output_dir, top_n_diseases, threshold, relation_type, top_n_drugs):
     """
     One-click complete all analysis steps, generate annotated_drugs.xlsx
     
@@ -36,7 +37,7 @@ def run(disease_id, model_run_id, output_dir, top_n_diseases, threshold, relatio
     os.makedirs(output_dir, exist_ok=True)
     core = DrugDiseaseCore()
 
-    model = Model("biomedgps-kge-v1")
+    model = Model(project_id)
     converted_files = model.download_and_convert(model_run_id)
     model_config = model.load_model_config(converted_files.get("model_dir"))
     model_name = model_config.get("model_name", None)
@@ -131,6 +132,7 @@ def visualize(input_file, output_dir, viz_type, disease_id, disease_name):
     help="Model run id, e.g. 6vlvgvfq. we can access `https://wandb.ai/yjcyxky/biomedgps-kge-v1?nw=nwuseryjcyxky` to get the model run id. If not specified, use the default model run id.",
     default="6vlvgvfq",
 )
+@click.option("--project-id", required=False, help="Project id, e.g. biomedgps-kge-v1. If not specified, use the default project id.", default="biomedgps-kge-v1")
 @click.option("--filter-expression", required=False, help="Filter expression, e.g. 'pvalue < 0.05 and num_of_shared_genes > 10'", default=None)
 @click.option(
     "--output-dir", required=False, help="Output directory", default="results"
@@ -139,11 +141,12 @@ def visualize(input_file, output_dir, viz_type, disease_id, disease_name):
 @click.option('--threshold', default=0.5, help='drug filtering threshold')
 @click.option('--relation-type', default='GNBR::T::Compound:Disease', help='A relation type which means the treatment relationship between a compound and a disease.')
 @click.option('--top-n-drugs', default=100, help='number of drugs to interpret')  # number of drugs to interpret, default 100, if number of drugs to interpret is specified, then top_n_drugs is required
-def pipeline(disease_id, model_run_id, filter_expression, output_dir, top_n_diseases, threshold, relation_type, top_n_drugs):
+def pipeline(disease_id, model_run_id, project_id, filter_expression, output_dir, top_n_diseases, threshold, relation_type, top_n_drugs):
     """Run full pipeline, run --> filter --> visualize."""
     run_full_pipeline(
         disease_id=disease_id,
         model_run_id=model_run_id,
+        project_id=project_id,
         output_dir=output_dir,
         filter_expression=filter_expression,
         top_n_diseases=top_n_diseases,

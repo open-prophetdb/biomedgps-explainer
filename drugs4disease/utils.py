@@ -358,7 +358,7 @@ def validate_model_files(
             return False
         
         # Validate knowledge graph file
-        kg_columns = ['source_id', 'source_type', 'source_name', 'target_id', 'target_type', 'target_name', 'relation_type']
+        kg_columns = ['source_id', 'source_type', 'target_id', 'target_type', 'relation_type']
         if not _validate_tsv_file(knowledge_graph, kg_columns, min_rows=1):
             print(f"✗ Knowledge graph file validation failed: {knowledge_graph}")
             return False

@@ -25,6 +25,7 @@ from drugs4disease.model import Model
 def main(
     disease_id: str,
     model_run_id: str = "6vlvgvfq",
+    project_id: str = "biomedgps-kge-v1",
     output_dir: str | None = None,
     filter_expression: str | None = None,
     top_n_diseases: int = 50,
@@ -40,7 +41,7 @@ def main(
     core = DrugDiseaseCore()
     drug_filter = DrugFilter()
 
-    model = Model("biomedgps-kge-v1")
+    model = Model(project_id)
     converted_files = model.download_and_convert(model_run_id)
     model_config = model.load_model_config(converted_files.get("model_dir"))
     model_name = model_config.get("model_name", None)

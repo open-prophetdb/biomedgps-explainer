@@ -39,7 +39,7 @@ dependencies = [
     "wandb>=0.15.0",
     "jinja2>=3.0.0",
     "tqdm>=4.0.0",
-    "graph-tool",
+    # "graph-tool", # You should install it manually using `conda install graph-tool -c conda-forge`
 ]
 
 [project.optional-dependencies]

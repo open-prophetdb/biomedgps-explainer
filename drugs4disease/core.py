@@ -34,6 +34,11 @@ class DrugDiseaseCore:
         if not validate_model_files(entity_file, knowledge_graph, entity_embeddings, relation_embeddings):
             raise FileNotFoundError("Model file validation failed")
 
+        # validate relation_type
+        relation_embeddings_df = pd.read_csv(relation_embeddings, sep="\t")
+        if relation_type not in relation_embeddings_df["id"].to_numpy():
+            raise ValueError(f"The relation type {relation_type} is not found in the relation embeddings file. You might need to use a different relation type with --relation-type argument.")
+
         # 1. drug prediction
         pred_xlsx = os.path.join(output_dir, 'predicted_drugs.xlsx')
         if os.path.exists(pred_xlsx):
@@ -52,7 +57,7 @@ class DrugDiseaseCore:
         else:
             self.logger.info("Shared genes/pathways file is not found, annotate the shared genes/pathways")
             self.annotate_shared_genes_pathways(
-                pred_xlsx, disease_id, knowledge_graph, shared_genes_xlsx, top_n_drugs
+                pred_xlsx, disease_id, knowledge_graph, shared_genes_xlsx, top_n_drugs, entity_file
             )
 
         # 3. shared diseases annotation
@@ -62,7 +67,7 @@ class DrugDiseaseCore:
         else:
             self.logger.info("Shared diseases file is not found, annotate the shared diseases")
             self.annotate_shared_diseases(
-                pred_xlsx, disease_id, knowledge_graph, entity_embeddings, relation_embeddings, shared_diseases_xlsx, model, gamma, top_n_diseases
+                pred_xlsx, disease_id, knowledge_graph, entity_embeddings, relation_embeddings, shared_diseases_xlsx, model, gamma, top_n_diseases, entity_file
             )
 
         # 4. network analysis/centrality/pathway annotation
@@ -104,6 +109,37 @@ class DrugDiseaseCore:
         drug_names = entity_df[entity_df["id"].isin(drug_ids)]["name"].to_numpy()
         return drug_names.tolist()
 
+    def annotate_kg_df(self, kg_df: pd.DataFrame, entity_file: str | None = None) -> pd.DataFrame:
+        if entity_file is None:
+            return kg_df
+
+        # BioMedGPS format knowledge graph already contains source_name and target_name
+        if not set(["source_name", "target_name"]).issubset(set(kg_df.columns)):
+            # if the name column is missing, load from annotated_entities.tsv
+            entity_df = pd.read_csv(entity_file, sep="\t")
+            entity_df = entity_df[["id", "label", "name"]]
+            entity_df_source = entity_df.rename(
+                columns={
+                    "id": "source_id",
+                    "label": "source_type",
+                    "name": "source_name",
+                }
+            )
+            entity_df_target = entity_df.rename(
+                columns={
+                    "id": "target_id",
+                    "label": "target_type",
+                    "name": "target_name",
+                }
+            )
+            kg_df = kg_df.merge(
+                entity_df_source, on=["source_id", "source_type"], how="left"
+            )
+            kg_df = kg_df.merge(
+                entity_df_target, on=["target_id", "target_type"], how="left"
+            )
+        return kg_df
+
     def predict_drugs(self, disease_id, entity_file, knowledge_graph, entity_embeddings, relation_embeddings, model, top_n_diseases, gamma, threshold, relation_type, output_file):
         """
         Generate potential drug list, save annotated_drugs.xlsx.
@@ -113,23 +149,14 @@ class DrugDiseaseCore:
 
         # Load the knowledge graph
         kg_df = pd.read_csv(knowledge_graph, sep="\t", dtype=str)
+        kg_df = self.annotate_kg_df(kg_df, entity_file)
         if not set([
-            "source_id", "source_type", "target_id", "target_type", "relation_type"
+            "source_id", "source_type", "target_id", "target_type", "relation_type", "source_name", "target_name"
         ]).issubset(set(kg_df.columns)):
             raise ValueError(
-                "The knowledge graph file must have the following columns: source_id, source_type, source_name, target_id, target_type, target_name, relation_type"
+                "The knowledge graph file must have the following columns: source_id, source_type, target_id, target_type, relation_type, source_name, target_name"
             )
         self.logger.info("Knowledge graph file is loaded")
-
-        # BioMedGPS format knowledge graph already contains source_name and target_name
-        if not set(["source_name", "target_name"]).issubset(set(kg_df.columns)):
-            # if the name column is missing, load from annotated_entities.tsv
-            entity_df = pd.read_csv(entity_file, sep="\t")
-            entity_df = entity_df[["id", "label", "name"]]
-            entity_df_source = entity_df.rename(columns={"id": "source_id", "label": "source_type", "name": "source_name"})
-            entity_df_target = entity_df.rename(columns={"id": "target_id", "label": "target_type", "name": "target_name"})
-            kg_df = kg_df.merge(entity_df_source, on=["source_id", "source_type"], how="left")
-            kg_df = kg_df.merge(entity_df_target, on=["target_id", "target_type"], how="left")
 
         drug_df = kg_df[(kg_df["source_type"] == "Compound") | (kg_df["target_type"] == "Compound")]
         source_drugs = drug_df[["source_id", "source_name"]].rename(columns={"source_id": "drug_id", "source_name": "drug_name"})
@@ -263,7 +290,7 @@ class DrugDiseaseCore:
             },
             inplace=True,
         )
-        treated_disease_grouped_df["treated_similar_disease_ids"] = treated_disease_grouped_df["treated_disease_ids"].apply(lambda x: "|".join(list(set(x).intersection(set(top_n_disease_ids)))))
+        treated_disease_grouped_df["treated_similar_disease_ids"] = treated_disease_grouped_df["treated_disease_ids"].apply(lambda x: "|".join(list(set([str(item) for item in x if pd.notna(item)]).intersection(set(top_n_disease_ids)))))
         treated_disease_grouped_df["treated_similar_disease_names"] = treated_disease_grouped_df["treated_similar_disease_ids"].apply(lambda x: treated_disease_df[treated_disease_df["disease_id"].isin(x.split("|"))]["disease_name"].to_numpy())
         treated_disease_grouped_df["treated_similar_disease_names"] = treated_disease_grouped_df["treated_similar_disease_names"].apply(lambda x: "|".join(list(set(x))))
         treated_disease_grouped_df["num_of_treated_similar_diseases"] = treated_disease_grouped_df["treated_similar_disease_ids"].apply(lambda x: len([i for i in x.split("|") if i]))
@@ -272,7 +299,7 @@ class DrugDiseaseCore:
         treated_disease_grouped_df.sort_values(by=["num_of_treated_similar_diseases"], ascending=False, inplace=True)
         lib.save_df(treated_disease_grouped_df, output_file, "drug_with_treated_diseases")
 
-    def annotate_shared_genes_pathways(self, predicted_drug_file: str, disease_id: str, knowledge_graph: str, output_file: str, top_n_drugs: int = 1000):
+    def annotate_shared_genes_pathways(self, predicted_drug_file: str, disease_id: str, knowledge_graph: str, output_file: str, top_n_drugs: int = 1000, entity_file: str = None):
         """
         Count the shared genes and pathways of drugs and diseases, output shared_genes_pathways.xlsx.
         """
@@ -280,6 +307,7 @@ class DrugDiseaseCore:
             raise ValueError("Output file must be an Excel file")
 
         kg_df = pd.read_csv(knowledge_graph, sep="\t", dtype=str)
+        kg_df = self.annotate_kg_df(kg_df, entity_file)
         if not set([
             "source_id", "source_type", "source_name", "target_id", "target_type", "target_name", "relation_type"
         ]).issubset(set(kg_df.columns)):
@@ -489,7 +517,7 @@ class DrugDiseaseCore:
             )
             lib.save_df(shared_pathways, output_file, "shared_pathways_summary")
 
-    def annotate_shared_diseases(self, predicted_drug_file, disease_id, knowledge_graph, entity_embeddings, relation_embeddings, output_file, model, gamma, top_n):
+    def annotate_shared_diseases(self, predicted_drug_file: str, disease_id: str, knowledge_graph: str, entity_embeddings: str, relation_embeddings: str, output_file: str, model: str, gamma: float, top_n: int, entity_file: str | None = None):
         """
         Count the shared diseases of drugs and diseases, output shared_diseases.xlsx.
         """
@@ -537,6 +565,7 @@ class DrugDiseaseCore:
         self.logger.info(f"Predicted file is deduplicated, and it has {len(predicted_df)} rows")
 
         kg_df = pd.read_csv(knowledge_graph, sep="\t")
+        kg_df = self.annotate_kg_df(kg_df, entity_file)
         if not set(["source_id", "source_type", "source_name", "target_id", "target_type", "target_name", "relation_type"]).issubset(set(kg_df.columns)):
             raise ValueError("The knowledge graph file must have the following columns: source_id, source_type, source_name, target_id, target_type, target_name, relation_type")
         self.logger.info("Knowledge graph file is loaded")
@@ -621,7 +650,7 @@ class DrugDiseaseCore:
         lib.save_df(results_df, output_file, "shared_diseases")
         self.logger.info("The results are saved to the file")
 
-    def annotate_network_features(self, predicted_drug_file, disease_id, knowledge_graph, entity_file, output_file, top_n_drugs=1000):
+    def annotate_network_features(self, predicted_drug_file: str, disease_id: str, knowledge_graph: str, entity_file: str, output_file: str, top_n_drugs: int = 1000):
         """
         Calculate the network annotations of drug-disease-gene path, centrality, PPI, pathway enrichment, etc., output network_annotations.xlsx.
         """

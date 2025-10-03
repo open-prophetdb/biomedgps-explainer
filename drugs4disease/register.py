@@ -43,6 +43,12 @@ else:
                 param_default="6vlvgvfq",
             ),
             ToolParam(
+                param_name="project_id",
+                param_type=str,
+                param_desc="The project id. It must be a project id. such as biomedgps-kge-v1",
+                param_default="biomedgps-kge-v1",
+            ),
+            ToolParam(
                 param_name="output_dir",
                 param_type=str,
                 param_desc="The output directory. It must be a directory. such as ./results",
@@ -85,6 +91,7 @@ else:
 
         def execute(self, **kwargs):
             """Execute the tool."""
+            project_id = kwargs.get("project_id", "biomedgps-kge-v1")
             output_dir = kwargs.get("output_dir", ".")
             model_run_id = kwargs.get("model_run_id", "6vlvgvfq")
             disease_id = kwargs.get("disease_id", None)
@@ -99,7 +106,7 @@ else:
             os.makedirs(output_dir, exist_ok=True)
             core = DrugDiseaseCore()
 
-            model = Model("biomedgps-kge-v1")
+            model = Model(project_id)
             converted_files = model.download_and_convert(model_run_id)
             model_config = model.load_model_config(converted_files.get("model_dir"))
             model_name = model_config.get("model_name", None)

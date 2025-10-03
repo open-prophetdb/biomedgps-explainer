@@ -9,10 +9,19 @@ import requests
 import json
 from openpyxl import load_workbook
 from typing import List, Tuple, Union, Dict
+import logging
+import torch.nn.functional as fn
+
+logger = logging.getLogger(__name__)
 
 # conda install graph-tool -c conda-forge
-import graph_tool.all as gt
-import torch.nn.functional as fn
+try:
+    import graph_tool.all as gt
+except Exception as e:
+    logger.error(f"Error loading graph_tool: {e}")
+    logger.warning(
+        f"⚠️ graph_tool is not available, you should install it manually using `conda install graph-tool -c conda-forge`"
+    )
 
 
 # function: calculate the cosine similarity between two vectors
@@ -551,7 +560,9 @@ def kge_score_fn_batch(
     """
     logger.info(f"The type of heads: {type(heads)}, len(heads): {len(heads)}")
     logger.info(f"The type of tails: {type(tails)}, len(tails): {len(tails)}")
-    logger.info(f"The type of relation: {type(relation)}, len(relation): {len(relation)}")
+    logger.info(
+        f"The type of relation: {type(relation)}, len(relation): {len(relation)}"
+    )
 
     if not isinstance(tails, list) or not all(
         isinstance(tail, np.ndarray) for tail in tails
